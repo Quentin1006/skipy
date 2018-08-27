@@ -99,25 +99,29 @@
                 "from":0,
                 "to":1,
                 "date":1535364824529,
-                "content":"Hey !"
+                "content":"Hey !",
+                "state": 2
              },
              {  
                 "from":0,
                 "to":1,
                 "date":1535364824529,
-                "content":"how are you?"
+                "content":"how are you?",
+                "state": 2
              },
              {  
                 "from":1,
                 "to":0,
                 "date":1535364824649,
-                "content":"Hey Robyn !"
+                "content":"Hey Robyn !",
+                "state": 2
              },
              {  
                 "from":1,
                 "to":0,
                 "date":1535364824649,
-                "content":"Im good and you ?"
+                "content":"Im good and you ?",
+                "state": 2
              }
           ]
        },
@@ -130,19 +134,22 @@
                 "from":4,
                 "to":0,
                 "date":1535364824529,
-                "content":"Robyn !"
+                "content":"Robyn !",
+                "state": 2
              },
              {  
                 "from":0,
                 "to":4,
                 "date":1535364824529,
-                "content":"sabi !"
+                "content":"sabi !",
+                "state": 2
              },
              {  
                 "from":4,
                 "to":0,
                 "date":1535364824649,
-                "content":"Long time no see ! How have you been ?"
+                "content":"Long time no see ! How have you been ?",
+                "state": 2
              }
           ]
        },
@@ -155,22 +162,30 @@
                 "from":6,
                 "to":4,
                 "date":1535364824529,
-                "content":"Nothing that i can't explain"
+                "content":"Nothing that i can't explain",
+                "state": 2
              },
              {  
                 "from":6,
                 "to":4,
                 "date":1535364824529,
-                "content":"It's a nightmare"
+                "content":"It's a nightmare",
+                "state": 2
              },
              {  
                 "from":4,
                 "to":6,
                 "date":1535364824649,
-                "content":"What are you talking about ?"
+                "content":"What are you talking about ?",
+                "state": 2
              }
           ]
        }
+    ],
+    "messageState": [
+        "not delivered",
+        "not seen",
+        "seen"
     ]
  }
  
