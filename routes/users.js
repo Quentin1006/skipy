@@ -7,7 +7,6 @@ var db = require("../db");
 router.get('/:id', sendUser);
 router.get("/:id/friends", sendUserFriends);
 router.get("/:id/activeDiscussions", sendUserActiveDiscussions);
-router.get("/discussion/:discId", sendDiscussion);
 
 
 
@@ -44,20 +43,6 @@ function sendUserActiveDiscussions(req, res, next){
 		const activeDiscussions = db.getUserActiveDiscussions(id);
 
 		res.send(activeDiscussions);
-	}
-	catch(e){
-    	console.log(e);
-    	next(e);
-  	}
-}
-
-
-function sendDiscussion(req, res, next){
-	try {
-		const id = parseInt(req.params.discId);
-		const discussion = db.getDiscussion(id);
-
-		res.send(discussion);
 	}
 	catch(e){
     	console.log(e);

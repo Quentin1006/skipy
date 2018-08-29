@@ -1,0 +1,191 @@
+{  
+    "users":[  
+       {  
+          "id":0,
+          "firstname":"Robyn",
+          "lastname":"Cope",
+          "username":"Robyn",
+          "profilepicture":"/images/robyn-cope.png",
+          "status":""
+       },
+       {  
+          "id":1,
+          "firstname":"Hassan",
+          "lastname":"Corkery Sr.",
+          "username":"Hassan",
+          "profilepicture":"/images/hassan-corkery.png",
+          "status":""
+       },
+       {  
+          "id":2,
+          "firstname":"Rolland",
+          "lastname":"Friech",
+          "username":"Rolland",
+          "profilepicture":"/images/rolland-friech.png",
+          "status":""
+       },
+       {  
+          "id":3,
+          "firstname":"Frederic",
+          "lastname":"Cronier",
+          "username":"Fred",
+          "profilepicture":"/images/frederic-cronier.png",
+          "status":""
+       },
+       {  
+          "id":4,
+          "firstname":"Sabina",
+          "lastname":"Blanda",
+          "username":"Sabi",
+          "profilepicture":"/images/sabina-blanda.png",
+          "status":""
+       },
+       {  
+          "id":5,
+          "firstname":"Weldon",
+          "lastname":"Koelpin",
+          "username":"Weldon",
+          "profilepicture":"/images/weldon-Koelpin.png",
+          "status":""
+       },
+       {  
+          "id":6,
+          "firstname":"Urban",
+          "lastname":"Bauch",
+          "username":"Urb",
+          "profilepicture":"/images/urban-bauch.png",
+          "status":""
+       }
+    ],
+    "friendships":[  
+       {  
+          "id":0,
+          "friend1":0,
+          "friend2":1
+       },
+       {  
+          "id":1,
+          "friend1":0,
+          "friend2":3
+       },
+       {  
+          "id":2,
+          "friend1":2,
+          "friend2":4
+       },
+       {  
+          "id":3,
+          "friend1":5,
+          "friend2":0
+       },
+       {  
+          "id":4,
+          "friend1":6,
+          "friend2":0
+       },
+       {  
+          "id":5,
+          "friend1":0,
+          "friend2":4
+       }
+    ],
+    "discussions":[  
+       {  
+          "id":0,
+          "user1":0,
+          "user2":1,
+          "content":[  
+             {  
+                "from":0,
+                "to":1,
+                "date":1535364824529,
+                "content":"Hey !",
+                "state": 2
+             },
+             {  
+                "from":0,
+                "to":1,
+                "date":1535364824529,
+                "content":"how are you?",
+                "state": 2
+             },
+             {  
+                "from":1,
+                "to":0,
+                "date":1535364824649,
+                "content":"Hey Robyn !",
+                "state": 2
+             },
+             {  
+                "from":1,
+                "to":0,
+                "date":1535364824649,
+                "content":"Im good and you ?",
+                "state": 2
+             }
+          ]
+       },
+       {  
+          "id":1,
+          "user1":0,
+          "user2":4,
+          "content":[  
+             {  
+                "from":4,
+                "to":0,
+                "date":1535364824529,
+                "content":"Robyn !",
+                "state": 2
+             },
+             {  
+                "from":0,
+                "to":4,
+                "date":1535364824529,
+                "content":"sabi !",
+                "state": 2
+             },
+             {  
+                "from":4,
+                "to":0,
+                "date":1535364824649,
+                "content":"Long time no see ! How have you been ?",
+                "state": 2
+             }
+          ]
+       },
+       {  
+          "id":2,
+          "user1":6,
+          "user2":4,
+          "content":[  
+             {  
+                "from":6,
+                "to":4,
+                "date":1535364824529,
+                "content":"Nothing that i can't explain",
+                "state": 2
+             },
+             {  
+                "from":6,
+                "to":4,
+                "date":1535364824529,
+                "content":"It's a nightmare",
+                "state": 2
+             },
+             {  
+                "from":4,
+                "to":6,
+                "date":1535364824649,
+                "content":"What are you talking about ?",
+                "state": 2
+             }
+          ]
+       }
+    ],
+    "messageState": [
+        "not delivered",
+        "not seen",
+        "seen"
+    ]
+ }
+ 

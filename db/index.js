@@ -1,7 +1,6 @@
 const fs = require('fs');
 const pathToData = "D:/React/serverSkypey/db/data.json"; // A ecrire de manière plus souple
 
-const db = JSON.parse(fs.readFileSync(pathToData, {encoding:'utf-8'}));
 
 const recomposeMessage = (msg) => {
     return {
@@ -14,7 +13,10 @@ const recomposeMessage = (msg) => {
 }
 
 
-exports.get = () => db;
+exports.get = () => JSON.parse(fs.readFileSync(pathToData, {encoding:'utf-8'}));
+
+
+const set = (newDb) => fs.writeFileSync(pathToData, JSON.stringify(newDb));
 
 
 ////// USER ACTIONS /////
@@ -51,17 +53,6 @@ exports.getUserActiveDiscussions = (userId) => {
 }
 
 
-exports.getDiscussion = (discId) => {
-    const id = parseInt(discId);
-    const discussion = db.discussions.filter(disc => (id === disc.id))[0];
-
-    return {
-        user1: this.getUserById(discussion.user1),
-        user2: this.getUserById(discussion.user2),
-        content: discussion.content.map(msg => recomposeMessage(msg))
-    }
-}
-
 
 exports.getUserDiscussions = (userId) => {
     const id = parseInt(userId);
@@ -87,4 +78,52 @@ exports.getUserDiscussions = (userId) => {
 }
 
 
+////// DISCUSSION ACTIONS /////
 
+exports.getDiscussion = (discId) => {
+    const id = parseInt(discId);
+    const discussion = db.discussions.filter(disc => (id === disc.id))[0];
+
+    return {
+        user1: this.getUserById(discussion.user1),
+        user2: this.getUserById(discussion.user2),
+        content: discussion.content.map(msg => recomposeMessage(msg))
+    }
+};
+
+
+exports.discussionExists = (user1, user2) => {
+    const joinedUsers = user1+ "" +user2;
+    const reverseJoinedUsers = user2+ "" + user1;
+
+    const discussions = this.get().discussions;
+
+    return discussions.filter((disc) => {
+        const joinedDiscUsers = disc.user1 +""+ disc.user2;
+        return (joinedDiscUsers === joinedUsers || joinedDiscUsers === reverseJoinedUsers)
+    });
+}
+
+
+exports.addDiscussion = (user1, user2) => {
+    const db = this.get();
+    const discussions = db.discussions.slice(0);
+    const newId = discussions[discussions.length - 1].id + 1;
+    const discussion = {
+        id: newId,
+        user1,
+        user2,
+        content: []
+    }
+
+    discussions.push(discussion);
+
+    set({ 
+        ...db,
+        discussions
+
+    });
+
+    return discussion;
+};
+ 
