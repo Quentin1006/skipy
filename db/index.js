@@ -126,4 +126,31 @@ exports.addDiscussion = (user1, user2) => {
 
     return discussion;
 };
+
+
+// Il faudrait ajouter un traitement de l'erreur 
+// au cas ou le msg n'a pas pu etre ajouté
+// On devrait aussi vérifier que les participants correspondent bien a la discussion
+exports.addMessageToDiscussion = (discId, msg) => {
+    const db = this.get();
+    
+    // we complete the msg obj before adding it to the db
+    msg.date = Date.now;
+    msg.state = 1; // On devrait mettre une CONSTANTE a la place de ce chiffre
+
+    const discussions = db.discussions.slice(0);
+    const updatedDisc = discussions.map((disc) => {
+        disc.id === discId && disc.content.push(msg)
+        return disc;
+    });
+
+    set({ 
+        ...db,
+        discussions
+
+    });
+
+    return msg;
+
+}
  
