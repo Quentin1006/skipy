@@ -71,16 +71,9 @@ module.exports = (db) => {
         msg.date = Date.now();
         msg.state = 1; // On devrait mettre une CONSTANTE a la place de ce chiffre
 
-        const discussions = data.discussions.slice(0).map((disc) => {
-            if(disc.id === discId){
-                // En faisant ca on evite de toucher à la db originale
-                const content = disc.content.slice(0);
-                content.push(msg);
-                return {
-                    ...disc,
-                    content
-                }
-            }
+        const discussionFromDb = JSON.parse(JSON.stringify(data.discussions));
+        const discussions = discussionFromDb.map((disc) => {
+            disc.id === discId && disc.content.push(msg);
             return disc;
         });
 
