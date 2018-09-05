@@ -14,7 +14,8 @@ const db = {
 module.exports = Object.assign(
     {}, 
     require("./userORM")(db), 
-    require("./discussionORM")(db)
+    require("./discussionORM")(db),
+    require("./notificationORM")(db)
 );
 
 

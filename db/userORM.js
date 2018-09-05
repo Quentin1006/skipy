@@ -7,6 +7,11 @@ module.exports = (db) => {
         return (users.filter((usr) => usr.id === id ))[0];
     }
 
+    const getUserIndex = (userId) => {
+        const data = db.get();
+        return data.users.findIndex(user => userId = user.id);
+    }
+
 
     const getUserFriends = (userId) => {
         const data = db.get();
@@ -74,6 +79,7 @@ module.exports = (db) => {
 
     return {
         getUserById,
+        getUserIndex,
         getUserFriends,
         getUserActiveDiscussions,
         getUserDiscussions,

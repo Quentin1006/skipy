@@ -8,7 +8,59 @@ router.get('/:id', sendUser);
 router.get("/:id/friends", sendUserFriends);
 router.get("/:id/activeDiscussions", sendUserActiveDiscussions);
 
+router.get("/:id/notifications", getNotifications);
+router.post("/:id/notifications", addNotification);
+router.delete("/:id/notifications/:notifId", deleteNotifications);
 
+
+
+function addNotification(req, res, next){
+	try {
+		const userId = parseInt(req.params.id);
+		const notif = JSON.parse(req.body.notif);
+
+		const addedNotif = db.createNotification(userId, notif);
+		const outcome = !!addedNotif ? "success" : "failure";
+
+		res.send(outcome);
+	}
+
+	catch(e){
+		console.log(e);
+    	next(e);
+  	}
+
+}
+
+function getNotifications(req, res, next){
+	try {
+    	const userId = parseInt(req.params.id);
+    	const notifs = db.getUserNotifications(userId);
+
+    	res.send(notifs);
+  	}
+  	catch(e){
+    	console.log(e);
+    	next(e);
+  	}
+}
+
+function deleteNotifications(req, res, next){
+	try {
+    	const userId = parseInt(req.params.id);
+		const notifId = parseInt(req.params.notifId);
+		
+		const deletedNotif = db.deleteNotification(userId, notifId);
+
+		const outcome = !!deletedNotif ? "success" : "failure";
+
+    	res.send(outcome);
+  	}
+  	catch(e){
+    	console.log(e);
+    	next(e);
+  	}
+}
 
 
 function sendUser(req, res, next){
