@@ -2,8 +2,7 @@ const fs = require('fs');
 const pathToData = "D:/React/serverSkypey/db/data.json"; // A ecrire de manière plus souple
 const readJSON = (path) => JSON.parse(fs.readFileSync(path, {encoding:'utf-8'}));
 const writeJSON = (path, data) => fs.writeFileSync(path, JSON.stringify(data));
-const combineORMs = (arrayOfORM) => Object.assign({}, ...arrayOfORM)
-
+const combineORMs = (...arrayOfORM) => Object.assign({}, ...arrayOfORM);
 
 const data = readJSON(pathToData);
 
