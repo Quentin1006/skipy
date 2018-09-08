@@ -4,10 +4,7 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
-var discRouter = require('./routes/discussions');
-var loginRouter = require('./routes/login');
+var indexRouter = require('./routes');
 
 var app = express();
 
@@ -18,10 +15,9 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// On a ici notre router complet
+// SI on veut modifier/ajouter des routes on le fait direct dans le dossier routes
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
-app.use('/discussions', discRouter);
-app.use('/login', loginRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
