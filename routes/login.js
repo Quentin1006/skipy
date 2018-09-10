@@ -13,4 +13,8 @@ router.post('/', (req, res, next) => {
         .then((res) => { console.log(res)});
 });
 
+
+router.get('/', (req, res, next) => {
+    res.send("ok")
+});
 module.exports = router;
