@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const db = require("../db");
 
 const { getUserFBdata } = require("../lib/facebook/oauth");
 
@@ -7,14 +8,23 @@ const { getUserFBdata } = require("../lib/facebook/oauth");
  
 /* GET home page. */
 router.post('/', (req, res, next) => {
-    const accessToken = req.body.accessToken;
+    const { accessToken, authProvider } = req.body;
 
-    getUserFBdata(accessToken)
-        .then((res) => { console.log(res)});
+    if(hasToRegister){
+        getUserFBdata(accessToken)
+            .then((res) => { });
+    }
+
+    
 });
 
 
 router.get('/', (req, res, next) => {
-    res.send("ok")
+    if(req.user){
+        res.send({logged_in:true, user: req.user})
+    }
+    else {
+        res.send({logged_in:false});
+    }
 });
 module.exports = router;
