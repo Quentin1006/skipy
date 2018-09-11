@@ -7,8 +7,14 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "debug fb auth",
+            "name": "Debug FB auth",
             "program": "${workspaceFolder}/lib/authenticate/facebook/tests/authenticateTest.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Debug auth",
+            "program": "${workspaceFolder}/lib/authenticate/tests/authenticateTest.js"
         },
         {
             "type": "node",
