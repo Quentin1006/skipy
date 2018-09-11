@@ -7,9 +7,28 @@ module.exports = (db) => {
         return (users.filter((usr) => usr.id === id ))[0];
     }
 
+    const addUser = (user) => {
+       const data = db.get();
+       const { users }  = data;
+       users.push(user);
+
+       db.set({
+           ...data,
+            users
+       })
+
+    }
+
     const getUserIndex = (userId) => {
         const data = db.get();
         return data.users.findIndex(user => userId = user.id);
+    }
+
+    const checkIfUserExists = (value, crit) => {
+        const data = db.get();
+        const { users } = data;
+
+        return users.find(user => user[crit] === value);
     }
 
 
@@ -83,7 +102,9 @@ module.exports = (db) => {
         getUserFriends,
         getUserActiveDiscussions,
         getUserDiscussions,
-        recomposeMessage
+        recomposeMessage,
+        addUser,
+        checkIfUserExists
     }
 
 }
