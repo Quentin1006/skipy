@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const db = require("../db");
-const { authenticate } = require("../lib/authenticate");
-const { attachUserToSession } = require("../lib/authenticate/attachUser.js");
+const { authenticate } = require("../modules/authenticate");
+const { attachUserToSession } = require("../modules/authenticate/attachUser.js");
 
 router.post('/', authenticateRequest);
 router.get('/',  checkIfLoggedIn);

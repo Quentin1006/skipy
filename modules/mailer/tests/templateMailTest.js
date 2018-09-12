@@ -2,7 +2,7 @@ const { transporterOpts } = require("../../../config");
 
 const templateOpts = {
     viewEngine : {extname: '.hbs'},
-    viewPath: "./lib/mailer/tests/",
+    viewPath: "./modules/mailer/tests/",
     extName: ".hbs"
 }
 
