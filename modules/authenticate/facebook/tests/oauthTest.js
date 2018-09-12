@@ -1,6 +1,7 @@
-const m = require("../FBOauth.js");
+const FBoauth = require("../../../../config").oauth.facebook;
+const m = require("../FBOauth.js")(FBoauth);
 
-const userToken = "EAAcHDCqVtGgBALxlL6ZCULjhZBl2xQLGKOrLwK7b0EMNLmWOkyLcZAZATKsEUnZAuQIPZBSDWJiRoZArkrP4woauGbmWtSTwEQhlfduoL8jGiL30zOvQuSYzWmT6DFjkN4UaFmWZADeNMyk9gzQEp99mjplHn07p7OiLLLGXrgDArpIwZCwVLXVM0v2ZCCjR8bktzN3jb4WBji5f92v1dq5hhoCNoJDNZAe7n2QmGxQ1DJ8UAZDZD"
+const userToken = "EAAcHDCqVtGgBAEJ6acmQThYg3TaZAZA2jSzGj12xnvanJjuAmBlZBahp5ldAugYhrH7WwxtLokReR3DvvSAeJV7NUmPeP4o2ZBacZAnlibEDFqesBMtKidZAasemJjsiLV1OQnVHxdvTt7WFswfIWOZAy5XZBNtXo3LZCrMRgHdw48wa3i1Vfn4bWqy7jNVljnwES2BUiYM9vz3dWoKMZADv5n8eTGQYJcsv0gT1R7xceZByQZDZD"
 const appToken = "";
 const scope = "id,name,email,friends";
 const code = "AQBbGSaoPBtzfqSEwubxuufwGv-SX-_nk-s2MUdWEYtNQnQtZTEoL8fWQC6HG8-SvjC91PpCEcuTdTi6iBRoKOWZvECyy9zTn5kpa_paVVDloEMIZEyEytHHjjkhLcmJdqcM9hMJmFnpGVhPrua0A-yjkDCRdtIdC6zDrpz6Cf3yfb9g7g7ZXkniSQLuC1k2ef7NnmHSusGb1ikSSwA07qHLu0kPU7JEHx43dwaY4xq_Iem85SVQ0kzgn9Wu9RHjxu14yCsvA7noKZu4K-2BnunWHPD1-q91Pu__rFA5DTMoC7puozzNlzHWJ_gfUO8uk0A#_=_"
