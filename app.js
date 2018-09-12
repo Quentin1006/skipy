@@ -4,20 +4,20 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const session = require('express-session');
-const { sessionOptions } = require("./config");
+const { sessionOpts } = require("./config");
 
 const indexRouter = require('./routes');
 
 const app = express();
 
 
-app.use(logger('dev'));
+app.use(logger('combined'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use(session(sessionOptions))
+app.use(session(sessionOpts))
 
 // On a ici notre router complet
 // Si on veut modifier/ajouter des routes on le fait direct dans le dossier routes

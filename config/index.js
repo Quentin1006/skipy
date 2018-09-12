@@ -1,7 +1,9 @@
-const sessionOptions = require("./session");
+const sessionOpts = require("./session");
 const oauth = require("./oauth");
+const { transporterOpts } = require("./mailer.js")
 
 module.exports = {
     oauth,
-    sessionOptions
+    sessionOpts,
+    transporterOpts
 }
