@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const db = require("../db");
-const { authenticate } = require("../modules/authenticate");
-const { attachUserToSession } = require("../modules/authenticate/attachUser.js");
+const { register } = require("../modules/register");
+const { attachUserToSession } = require("../modules/register/attachUser");
 
 router.post('/', authenticateRequest);
 router.get('/',  checkIfLoggedIn);
@@ -12,7 +12,7 @@ router.get('/',  checkIfLoggedIn);
 async function authenticateRequest(req, res, next){
     const { auth_type, access_token, auth_provider, redirect_url } = req.body;
 
-    const user = await authenticate({
+    const user = await register({
         auth_type,
         provider: auth_provider,
         access_token,

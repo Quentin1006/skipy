@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const { attachUserToReq } = require("../modules/authenticate/attachUser");
+const { attachUserToReq } = require("../modules/register/attachUser");
 
 ///// MIDDLEWARE /////
 
