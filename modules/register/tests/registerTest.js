@@ -1,4 +1,4 @@
-const { authenticateWithFB } = require("../FBauthenticate");
+const { register } = require("../");
 
 
 const authInfosWithToken = {
@@ -14,6 +14,6 @@ const authInfosWithCode = {
     provider: "facebook"
 }
 
-authenticateWithFB(authInfosWithCode)
-    .then(res => console.log("authenticateWithFB", res))
-    .catch(err => console.log("authenticateWithFB err", err));
+register(authInfosWithToken)
+    .then(res => console.log("register", res))
+    .catch(err => console.log("register err", err));

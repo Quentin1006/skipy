@@ -94,8 +94,9 @@
             "username": "Quentin",
             "email": "quentin.sahal@gmail.com",
             "lastname": "Sahal",
-            "token": "EAAcHDCqVtGgBAHB269IO7swArmPtcgzLf0puQjtD1BSriFDFZAdsMSrnVrZB6RGX04QsG3AOQfCsEZBmuVJZB76liYXWU3VaAWnTYnZAJGEPGOhZBHTCoQMGs0xzv65VKZAE4o6OEiQjEZA54gZCEXfNBq0UwASlDAicxZB3wgk4XBF24hfUBpLdYmpoImqTwPBxNZAJIM32zNzpAZDZD",
-            "profilepicture": "https://platform-lookaside.fbsbx.com/platform/profilepic/?asid=10155921253140692&height=50&width=50&ext=1539241871&hash=AeSn3a340plTfDnh",
+            "provider": "facebook",
+            "token": "EAAcHDCqVtGgBABDMZC55CUsNihJOFUyP8YEkdIZA1xkmsmoCQFakSck9r02VIw8BZCVDCHkX6C1Kgtl8GuVxKnUuVUoMpZCwGu7Pr7vwyLy4qVEYYvxZAQYvoZCq1bT4XvpWfT9uZClLw9ncVK4ANXhpL4PsWhtNgvFwXCDZAw6y4w2LScQGqZAjYqzb1BpGwfuUbGdVr2IYLo2oAEAoAUAjNEwy46Q4uYEKtfwI2d7rkLgZDZD",
+            "profilepicture": "https://platform-lookaside.fbsbx.com/platform/profilepic/?asid=10155921253140692&height=50&width=50&ext=1539431996&hash=AeT_xd8xpiaNwjcl",
             "status": "",
             "notifications": []
         }
