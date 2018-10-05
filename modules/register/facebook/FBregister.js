@@ -1,4 +1,4 @@
-const FacebookOauth = require("lib/Oauth/facebook/FBOauth")
+const FacebookOauth = require("lib/OAuth/facebook/FBOauth")
 
 
 const checkIfUserExists = () => {
@@ -41,7 +41,7 @@ module.exports = (FBoauthCreds) => {
                             email: user.email,
                             lastname: user.last_name,
                             provider: auth_infos.provider,
-                            token: token,
+                            token,
                             profilepicture: user.picture.data.url,
                             status:"",
                             notifications: []
@@ -54,7 +54,10 @@ module.exports = (FBoauthCreds) => {
                         };
                 }
                 else {
-                    return existingUser;
+                    return {
+                        ...existingUser,
+                        token
+                    }
                 }
             })
             .catch((err) => { console.log(err)});

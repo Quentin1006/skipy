@@ -2,9 +2,9 @@ module.exports = (db) => {
 
     const getUserById = (userId) => {
         const data = db.get();
-        const id = parseInt(userId);
+        const id = ""+ userId;
         const users = data.users;
-        return (users.filter((usr) => usr.id === id ))[0];
+        return (users.filter((usr) => "" + usr.id === id ))[0];
     }
 
     const addUser = (user) => {
@@ -34,8 +34,8 @@ module.exports = (db) => {
 
     const getUserFriends = (userId) => {
         const data = db.get();
-        const id = parseInt(userId);
-        const friendships = data.friendships.filter(fsp => (fsp.friend1 === id || fsp.friend2 === id))
+        const id = "" +userId;
+        const friendships = data.friendships.filter(fsp => (""+fsp.friend1 === id || ""+fsp.friend2 === id))
 
         return friendships.map(fsp => {
         const friendId = fsp.friend1 === userId ? fsp.friend2 : fsp.friend1;
@@ -45,9 +45,9 @@ module.exports = (db) => {
 
 
     const getUserActiveDiscussions = (userId) => {
-        const id = parseInt(userId);
+        const id = userId;
         const data = db.get();
-        const discussions = data.discussions.filter(disc => (disc.user1 === id || disc.user2 === id))
+        const discussions = data.discussions.filter(disc => ("" +disc.user1 === id || ""+disc.user2 === id))
 
         return discussions.map(disc => {
             const withId = disc.user1 === userId ? disc.user2 : disc.user1;
@@ -63,9 +63,9 @@ module.exports = (db) => {
 
 
     const getUserDiscussions = (userId) => {
-        const id = parseInt(userId);
+        const id = "" +userId;
         const data = db.get();
-        const discussions = data.discussions.filter(disc => (disc.user1 === id || disc.user2 === id))
+        const discussions = data.discussions.filter(disc => ("" +disc.user1 === id || "" +disc.user2 === id))
 
         return discussions.map(disc => {
             const participants = {};

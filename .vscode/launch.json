@@ -7,7 +7,7 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Launch Program",
+            "name": "Test OAuth",
             "program": "${workspaceFolder}/lib/OAuth/facebook/tests/oauthTest.js"
         },
         {

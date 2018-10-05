@@ -1,5 +1,5 @@
 // just so we can use require("lib/...") from everywhere in the project
-require('app-module-path').addPath(`../${__dirname}`);
+require('app-module-path').addPath(`./${__dirname}`);
 
 const createError = require('http-errors');
 const express = require('express');

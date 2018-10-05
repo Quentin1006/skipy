@@ -16,7 +16,7 @@ router.delete("/:id/notifications/:notifId", deleteNotifications);
 
 function addNotification(req, res, next){
 	try {
-		const userId = parseInt(req.params.id);
+		const userId = req.params.id;
 		const notif = JSON.parse(req.body.notif);
 
 		const addedNotif = db.createNotification(userId, notif);
@@ -34,7 +34,7 @@ function addNotification(req, res, next){
 
 function getNotifications(req, res, next){
 	try {
-    	const userId = parseInt(req.params.id);
+    	const userId = req.params.id;
     	const notifs = db.getUserNotifications(userId);
 
     	res.send(notifs);
@@ -47,7 +47,7 @@ function getNotifications(req, res, next){
 
 function deleteNotifications(req, res, next){
 	try {
-    	const userId = parseInt(req.params.id);
+    	const userId = req.params.id;
 		const notifId = parseInt(req.params.notifId);
 		
 		const deletedNotif = db.deleteNotification(userId, notifId);
@@ -65,7 +65,7 @@ function deleteNotifications(req, res, next){
 
 function sendUser(req, res, next){
 	try {
-    	const id = parseInt(req.params.id);
+    	const id = req.params.id;
     	const user = db.getUserById(id);
 
     	res.send(user);
@@ -78,7 +78,7 @@ function sendUser(req, res, next){
 
 function sendUserFriends(req, res, next){
 	try {
-		const id = parseInt(req.params.id);
+		const id = req.params.id;
 		const friendships = db.getUserFriends(id);
 
 		res.send(friendships);
@@ -91,7 +91,7 @@ function sendUserFriends(req, res, next){
 
 function sendUserActiveDiscussions(req, res, next){
 	try {
-		const id = parseInt(req.params.id);
+		const id = req.params.id;
 		const activeDiscussions = db.getUserActiveDiscussions(id);
 
 		res.send(activeDiscussions);
