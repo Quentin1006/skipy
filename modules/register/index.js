@@ -1,7 +1,8 @@
 // Insérer ici les stratégies d'authentification des providers désirés
 // les ajouter ensuite dans dans la boucle switch 
-
-const { registerWithFB } = require("./facebook/FBregister");
+const creds = require("config").oauth;
+const FBcreds = creds.facebook;
+const { registerWithFB } = require("./facebook/FBregister")(FBcreds);
 
 const register = async (authInfos) => {
     const { provider } = authInfos;
