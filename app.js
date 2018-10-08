@@ -9,6 +9,7 @@ const logger = require('morgan');
 const session = require('express-session');
 const { sessionOpts } = require("./config");
 const cors = require("cors");
+const { corsOpts } = require(".config");
 
 const indexRouter = require('./routes');
 
@@ -23,7 +24,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(session(sessionOpts))
 
-app.use(cors());
+app.use(cors(corsOpts));
 
 // On a ici notre router complet
 // Si on veut modifier/ajouter des routes on le fait direct dans le dossier routes

@@ -14,7 +14,10 @@ exports.attachUserToSession = (req, user) => {
 
 exports.verifyUser = (req, res, next) => {
     if(!req.user){
-        res.status(401).send('Unauthorized')
+        res.status(401).send({error:'Unauthorized', code:401})
     }
-    next();
+    else {
+        next();
+    }
+    
 }
