@@ -50,7 +50,7 @@ module.exports = (db) => {
         const discussions = data.discussions.filter(disc => ("" +disc.user1 === id || ""+disc.user2 === id))
 
         return discussions.map(disc => {
-            const withId = disc.user1 === userId ? disc.user2 : disc.user1;
+            const withId = disc.user1+"" === userId ? disc.user2 : disc.user1;
             const lastMessage = disc.content[disc.content.length-1];
 
             return {
