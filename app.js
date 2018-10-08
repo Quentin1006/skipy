@@ -9,7 +9,7 @@ const logger = require('morgan');
 const session = require('express-session');
 const { sessionOpts } = require("./config");
 const cors = require("cors");
-const { corsOpts } = require(".config");
+const { corsOpts } = require("./config");
 
 const indexRouter = require('./routes');
 
