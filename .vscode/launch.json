@@ -7,6 +7,12 @@
         {
             "type": "node",
             "request": "launch",
+            "name": "testRoutes",
+            "program": "${workspaceFolder}/routes/test/routesTest.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
             "name": "Test OAuth",
             "program": "${workspaceFolder}/lib/OAuth/facebook/tests/oauthTest.js"
         },
