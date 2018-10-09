@@ -1,3 +1,7 @@
+const env = process.env.NODE_ENV.toUpperCase();
+const { adminKey } = require("config");
+
+
 exports.attachUserToReq = (req, res, next) => {
     if(req.session && req.session.user){
         req.user = req.session.user;
@@ -13,11 +17,12 @@ exports.attachUserToSession = (req, user) => {
 }
 
 exports.verifyUser = (req, res, next) => {
-    if(!req.user){
-        res.status(401).send({error:'Unauthorized', code:401})
-    }
-    else {
+    const adminKeyHeader = req.headers["adminkey"];
+    if(req.user || (env === "DEVELOPMENT" && adminKeyHeader === adminKey)){
         next();
+    }
+    else{
+        res.status(401).send({error:'Unauthorized', code:401})
     }
     
 }
