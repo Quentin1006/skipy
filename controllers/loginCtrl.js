@@ -17,7 +17,7 @@ const authenticateRequest = async (req, res, next) => {
     res.send(user);
 }
 
-const checkIfLoggedIn = (req, res, next) =>{
+const chefIfUserSession = (req, res, next) =>{
     let objToSend = {};
     if(req.user){
         objToSend = {logged_in:true, user: req.user};
@@ -31,5 +31,5 @@ const checkIfLoggedIn = (req, res, next) =>{
 
 module.exports = {
     authenticateRequest,
-    checkIfLoggedIn
+    chefIfUserSession
 }

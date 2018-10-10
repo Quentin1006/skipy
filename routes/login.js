@@ -7,7 +7,7 @@ const loginCtrl = require('../controllers/loginCtrl');
 
 // LOGIN ROUTES
 router.post('/', loginCtrl.authenticateRequest);
-router.get('/',  loginCtrl.checkIfLoggedIn);
+router.get('/',  loginCtrl.chefIfUserSession);
 
 
 module.exports = router;
