@@ -17,7 +17,7 @@ const authenticateRequest = async (req, res, next) => {
     res.send(user);
 }
 
-const chefIfUserSession = (req, res, next) =>{
+const chefIfUserSession = (req, res, next) => {
     let objToSend = {};
     if(req.user){
         objToSend = {logged_in:true, user: req.user};
@@ -29,7 +29,14 @@ const chefIfUserSession = (req, res, next) =>{
     res.send(objToSend);
 }
 
+
+const logout = (req, res, next) => {
+    req.user = null;
+    req.session.user = null;
+}
+
 module.exports = {
     authenticateRequest,
-    chefIfUserSession
+    chefIfUserSession,
+    logout
 }
