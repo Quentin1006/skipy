@@ -20,10 +20,10 @@ const authenticateRequest = async (req, res, next) => {
 const chefIfUserSession = (req, res, next) => {
     let objToSend = {};
     if(req.user){
-        objToSend = {logged_in:true, user: req.user};
+        objToSend = {isLoggedIn:true, profile: req.user};
     }
     else {
-        objToSend = {logged_in:false};
+        objToSend = {isLoggedIn:false};
     }
 
     res.send(objToSend);
