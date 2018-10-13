@@ -89,5 +89,4 @@ function onListening() {
   
   const listeningText =  'Listening on ' + bind
   debug(listeningText);
-  console.log(listeningText);
 }
