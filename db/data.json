@@ -228,7 +228,7 @@
                     "to": 4,
                     "content": "Am i not making any sense?",
                     "date": 1535822312585,
-                    "state": 1
+                    "state": 2
                 }
             ]
         },
@@ -243,6 +243,34 @@
             "user1": 1,
             "user2": 4,
             "content": []
+        },
+        {
+            "id": 5,
+            "user1": 0,
+            "user2": 2,
+            "content": [
+                {
+                    "to": 2,
+                    "content": "goodbye boii",
+                    "from": 0,
+                    "date": 1539604239219,
+                    "state": 1
+                },
+                {
+                    "to": 2,
+                    "content": "goodbye boii",
+                    "from": 0,
+                    "date": 1539604989314,
+                    "state": 1
+                },
+                {
+                    "to": 2,
+                    "content": "second message",
+                    "from": 0,
+                    "date": 1539604998298,
+                    "state": 1
+                }
+            ]
         }
     ],
     "messageState": [
