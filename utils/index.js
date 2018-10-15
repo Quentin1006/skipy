@@ -1,3 +1,5 @@
+exports.str = (el) => (""+el);
+
 exports.deepCopy = (obj) => (JSON.parse(JSON.stringify(obj)));
 
 exports.shallowCopy = (obj) => {

@@ -7,7 +7,7 @@ const combineORMs = (...arrayOfORM) => Object.assign({}, ...arrayOfORM);
 const get = () => data;
 
 const set = (newDb) => {
-    writeJSON(pathToData, data)
+    writeJSON(pathToData, newDb)
     data = readJSON(pathToData);
 }
 
