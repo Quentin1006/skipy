@@ -271,6 +271,20 @@
                     "state": 1
                 }
             ]
+        },
+        {
+            "id": 6,
+            "user1": "2",
+            "user2": 1,
+            "content": [
+                {
+                    "to": 1,
+                    "content": "goodbye boii",
+                    "from": "2",
+                    "date": 1539687035496,
+                    "state": 1
+                }
+            ]
         }
     ],
     "messageState": [

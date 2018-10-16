@@ -4,34 +4,23 @@ const { sessionOpts } = require("../config");
 
 const db = require("../db");
 
+const socketIdToUserId = (socketId) => (Number((socket.id.split("#"))[1]));
+
 // AUCUN DE CES EVENTS N'EST REELLEMENT FONCTIONNEL 
 // PLUS UN MEMO POUR SAVOIR COMMENT STRUCTURER LA SOCKET MESSAGE
 
 module.exports = (io) => {
-    io.use(sharedsession(session(sessionOpts)));
     io.use((socket, next) => {
-        const session = socket.handshake.session
-        if(!session.user){
-            session.user = {
-                "id": "fb10155921253140692",
-                "firstname": "Quentin",
-                "username": "Quentin",
-                "email": "quentin.sahal@gmail.com",
-                "lastname": "Sahal",
-                "provider": "facebook",
-                "token": "EAAcHDCqVtGgBABDMZC55CUsNihJOFUyP8YEkdIZA1xkmsmoCQFakSck9r02VIw8BZCVDCHkX6C1Kgtl8GuVxKnUuVUoMpZCwGu7Pr7vwyLy4qVEYYvxZAQYvoZCq1bT4XvpWfT9uZClLw9ncVK4ANXhpL4PsWhtNgvFwXCDZAw6y4w2LScQGqZAjYqzb1BpGwfuUbGdVr2IYLo2oAEAoAUAjNEwy46Q4uYEKtfwI2d7rkLgZDZD",
-                "profilepicture": "https://platform-lookaside.fbsbx.com/platform/profilepic/?asid=10155921253140692&height=50&width=50&ext=1539431996&hash=AeT_xd8xpiaNwjcl",
-                "status": "",
-                "notifications": []
-            }
-        }
-        next();
+        console.log("in socket middleware")
     })
+    io.use(sharedsession(session(sessionOpts)));
+    
 
     io.on("connection", (socket) => {
         const sess = socket.handshake.session;
+        socket.emit("conn", socket.id);
 
-        const userId = sess.user.userId || 0 ; 
+        const userId =  socketIdToUserId(socket.id); 
         const activeDiscs = db.getUserActiveDiscussions(userId);
         socket.emit("retrieveActiveDiscs", activeDiscs);
 
@@ -52,7 +41,7 @@ module.exports = (io) => {
             
             const builtMsg = db.addMessageToDiscussion(discId, msg);
             socket.emit("sendMessage response", builtMsg);
-            socket.to(receiver).emit("sendMessage response", builtMsg);
+            socket.to(`/messages#${receiver}`).emit("sendMessage response", builtMsg);
         })
 
         socket.on("markAsSeen", (discId) => {

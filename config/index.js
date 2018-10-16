@@ -4,6 +4,7 @@ const corsOpts = require("./cors");
 const { transporterOpts } = require("./mailer.js")
 const adminKey = "dn6KL47PFTvip8RqxECtOcjyg19NGZmk";
 const httpsOpts = require("./https");
+const socketioOpts = require("./socketio");
 
 module.exports = {
     oauth,
@@ -11,5 +12,6 @@ module.exports = {
     transporterOpts,
     corsOpts,
     adminKey,
-    httpsOpts
+    httpsOpts,
+    socketioOpts
 }

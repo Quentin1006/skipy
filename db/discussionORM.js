@@ -47,7 +47,7 @@ module.exports = (db) => {
 
     const addDiscussion = (user1, user2) => {
         // si la discussion existe déja on la retourne et on s'arrete la 
-        const disc = discussionExists(user1, user2);
+        const disc = discussionExists(user1, user2) || {};
         if(disc.id)
             return disc;
 

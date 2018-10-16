@@ -7,10 +7,12 @@ const messageSocket = require("./messages");
 
 module.exports = (server) => {
     const io = socketio(server, socketOpts);
+    let id =1;
 
-    // io.engine.generateId = (req) => {
-    //     return req.session.user.id;
-    // }
+    io.engine.generateId = (req) => {
+        console.log("in generate id");
+        return id++;
+    }
 
     messageSocket(io.of('/messages'));
 };
