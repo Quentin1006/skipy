@@ -16,6 +16,12 @@ const indexRouter = require('./routes');
 const app = express();
 
 
+app.use((req, res, next) => {
+  if(process.env.NODE_ENV === "development" && app.worker)
+    console.log(app.worker.id);
+  next();
+})
+
 app.use(logger('combined'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));

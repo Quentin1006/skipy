@@ -6,12 +6,14 @@
 
 const app = require('../app');
 const debug = require('debug')('server:server');
-const https = require('https');
 const io = require("../socketio");
+const http = require('http');
+const https = require("https"); 
 const { httpsOpts } = require("../config");
-
 const numCPUs = process.env.CPUS;
-const stickycluster = require("../lib/stickycluster")(numCPUs);
+const stickycluster = require("../lib/cluster/stickycluster")(numCPUs);
+
+let server;
 
 /**
  * Get port from environment and store in Express.
@@ -19,6 +21,10 @@ const stickycluster = require("../lib/stickycluster")(numCPUs);
 
 const port = normalizePort(process.env.PORT || '3001');
 app.set('port', port);
+
+// if(basiccluster.isMaster()){
+// 	basiccluster.startMaster();
+// }
 
 if(stickycluster.isMaster()){
 	stickycluster.startMaster(port);
@@ -31,18 +37,24 @@ else {
 	/**
 	 * Create HTTP server.
 	 */
-	const server = stickycluster.startWorkers(app);
+	// app.worker = basiccluster.worker();
+	// server = https.createServer(httpsOpts, app);
+	// io(server);
+
+	// server.listen(port);
+
+	app.worker = stickycluster.getWorker();
+
+
+	server = https.createServer(httpsOpts, app);
+	stickycluster.startWorkers(server);
 	io(server);
 
-
-	/**
-	 * Listen on provided port, on all network interfaces.
-	 */
-
-	server.listen(port);
 	server.on('error', onError);
 	server.on('listening', onListening);
 
+
+	
 }
 
 
