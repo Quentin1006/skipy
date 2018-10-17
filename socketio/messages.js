@@ -4,15 +4,12 @@ const { sessionOpts } = require("../config");
 
 const db = require("../db");
 
-const socketIdToUserId = (socketId) => (Number((socket.id.split("#"))[1]));
+const socketIdToUserId = (socketId) => (Number((socketId.split("#"))[1]));
 
 // AUCUN DE CES EVENTS N'EST REELLEMENT FONCTIONNEL 
 // PLUS UN MEMO POUR SAVOIR COMMENT STRUCTURER LA SOCKET MESSAGE
 
 module.exports = (io) => {
-    io.use((socket, next) => {
-        console.log("in socket middleware")
-    })
     io.use(sharedsession(session(sessionOpts)));
     
 
