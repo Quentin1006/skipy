@@ -1,7 +1,7 @@
 const socketio = require("socket.io");
 const debug = require("debug")("socket:index");
 
-const socketOpts = require("../config");
+const { socketOpts } = require("../config");
 
 const messageSocket = require("./messages");
 
