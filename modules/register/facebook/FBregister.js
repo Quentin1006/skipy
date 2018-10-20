@@ -1,4 +1,4 @@
-const FacebookOauth = require("lib/OAuth/facebook/FBOauth")
+const FacebookOauth = require("../../../lib/OAuth/facebook/FBOauth")
 
 
 const checkIfUserExists = () => {
@@ -21,11 +21,15 @@ module.exports = (FBoauthCreds) => {
 
     const registerWithFB = async (auth_infos) => {
 
-        let token = auth_infos.access_token
+        let token = "";
         if(auth_infos.auth_type === "code"){
             await FBO.getAccessTokenFromCode(auth_infos.code, auth_infos.redirect_uri)
                 .then((res) => token = res.access_token)
                 .catch((err) => { throw(err)});
+        }
+        // On a directement le token depuis le client
+        else {
+            token = auth_infos.token_or_code;
         }
 
         return FBO.getUserFBdata(token)
@@ -41,7 +45,6 @@ module.exports = (FBoauthCreds) => {
                             email: user.email,
                             lastname: user.last_name,
                             provider: auth_infos.provider,
-                            token,
                             profilepicture: user.picture.data.url,
                             status:"",
                             notifications: []
@@ -49,14 +52,15 @@ module.exports = (FBoauthCreds) => {
                         this.addUser(userToAdd);
                         
                         return {
-                            ...userToAdd,
+                            user: userToAdd,
+                            token,
                             just_registered: true
                         };
                 }
                 else {
                     return {
-                        ...existingUser,
-                        token
+                        user: existingUser,
+                        token  
                     }
                 }
             })

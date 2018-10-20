@@ -1,23 +1,24 @@
 const { register } = require("../modules/register");
-const { attachUserToSession } = require("../modules/register/attachUser");
+const { attachUserAndTokenToSession } = require("../modules/register/helper");
 
 
 const authenticateRequest = async (req, res, next) => {
-    const { auth_type, access_token, auth_provider, redirect_url } = req.body;
+    const { auth_type, token_or_code, auth_provider, redirect_url } = req.body;
 
-    const user = await register({
+    const regInfos = await register({
         auth_type,
         provider: auth_provider,
-        access_token,
+        token_or_code,
         redirect_url,
     });
 
-    attachUserToSession(req, user);
+    attachUserAndTokenToSession(req, regInfos.user, regInfos.token);
+    delete regInfos.token;
 
-    res.send(user);
+    res.send(regInfos);
 }
 
-const chefIfUserSession = (req, res, next) => {
+const checkIfUserSession = (req, res, next) => {
     let objToSend = {};
     if(req.user){
         objToSend = {isLoggedIn:true, profile: req.user};
@@ -31,12 +32,15 @@ const chefIfUserSession = (req, res, next) => {
 
 
 const logout = (req, res, next) => {
-    req.user = null;
-    req.session.user = null;
+    delete req.user;
+    delete req.session.user;
+
+    // On renvoie ce qu'il reste de l'user en espérant que ce soit le null
+    res.send(req.user)
 }
 
 module.exports = {
     authenticateRequest,
-    chefIfUserSession,
+    checkIfUserSession,
     logout
 }

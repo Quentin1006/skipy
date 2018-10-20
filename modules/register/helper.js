@@ -1,5 +1,5 @@
 const env = process.env.NODE_ENV.toUpperCase();
-const { adminKey } = require("config");
+const { adminKey } = require("../../config");
 
 
 exports.attachUserToReq = (req, res, next) => {
@@ -11,9 +11,12 @@ exports.attachUserToReq = (req, res, next) => {
     
 }
 
-exports.attachUserToSession = (req, user) => {
-    if(req.session)
-        req.session.user = user
+exports.attachUserAndTokenToSession = (req, user, token) => {
+    if(req.session){
+        req.session.user = user;
+        req.session.access_token = token;
+    }
+        
 }
 
 exports.verifyUser = (req, res, next) => {

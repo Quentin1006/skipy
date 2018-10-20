@@ -1,21 +1,21 @@
 // Insérer ici les stratégies d'authentification des providers désirés
 // les ajouter ensuite dans dans la boucle switch 
-const creds = require("config").oauth;
+const creds = require("../../config").oauth;
 const FBcreds = creds.facebook;
 const { registerWithFB, use } = require("./facebook/FBregister")(FBcreds);
-const db = require("db");
+const db = require("../../db");
 
 const register = async (authInfos) => {
     const { provider } = authInfos;
-    let registeredUser = {};
+    let registerInfos = {};
     
     switch(provider) {
         case "facebook":
             use("checkIfUserExists", db.checkIfUserExists);
             use("addUser", db.addUser);
             await registerWithFB(authInfos)
-            .then(user => {
-                registeredUser = user
+            .then(res => {
+                registerInfos = res;
             });
             break;
         default:
@@ -23,7 +23,7 @@ const register = async (authInfos) => {
             break;
     }
 
-    return registeredUser;
+    return registerInfos;
 }
 
 
