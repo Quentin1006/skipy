@@ -31,6 +31,7 @@
   "devDependencies": {
     "loadtest": "^3.0.4",
     "nodemon": "^1.18.4",
+    "optimist": "^0.6.1",
     "puppeteer": "^1.9.0",
     "puppeteer-core": "^1.9.0"
   }

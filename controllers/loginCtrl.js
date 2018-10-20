@@ -1,3 +1,4 @@
+const debug = require("debug")("loginCtrl");
 const { register } = require("../modules/register");
 const { attachUserAndTokenToSession } = require("../modules/register/helper");
 
@@ -22,6 +23,9 @@ const checkIfUserSession = (req, res, next) => {
     let objToSend = {};
     if(req.user){
         objToSend = {isLoggedIn:true, profile: req.user};
+    }
+    else if(req.session && req.session.user){
+        debug("User session exists but isnt attached to req");
     }
     else {
         objToSend = {isLoggedIn:false};
