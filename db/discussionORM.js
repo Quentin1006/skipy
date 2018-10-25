@@ -1,5 +1,5 @@
 const { deepCopy, str } = require("../utils");
-const debug = require("debug")("discussionORM");
+const debug = require("debug")("orm:discussionORM");
 
 module.exports = (db) => {
 
@@ -48,8 +48,11 @@ module.exports = (db) => {
     const addDiscussion = (user1, user2) => {
         // si la discussion existe déja on la retourne et on s'arrete la 
         const disc = discussionExists(user1, user2) || {};
-        if(disc.id)
+        if(disc.id){
+            debug("discussion already exists");
             return disc;
+        }
+            
 
         const data = db.get();
         const discussions = data.discussions.slice(0);
@@ -60,6 +63,7 @@ module.exports = (db) => {
             user2,
             content: []
         }
+        debug("discussion created", discussion);
 
         discussions.push(discussion);
 
