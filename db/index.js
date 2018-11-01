@@ -1,4 +1,5 @@
 const Store = require("./store");
+const { pathToData } = require("../config");
 
 const db = new Store(pathToData, [
     require("./userORM"), 
