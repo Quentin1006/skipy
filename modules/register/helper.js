@@ -1,5 +1,6 @@
-const env = process.env.NODE_ENV.toUpperCase();
+const env = process.env.NODE_ENV.toUpperCase().trim();
 const { adminKey } = require("../../config");
+const debug = require("debug")("register:helper");
 
 
 exports.attachUserToReq = (req, res, next) => {
@@ -21,6 +22,8 @@ exports.attachUserAndTokenToSession = (req, user, token) => {
 
 exports.verifyUser = (req, res, next) => {
     const adminKeyHeader = req.headers["adminkey"];
+    debug("is env dev", env=== "DEVELOPMENT")
+    debug("has admin key", adminKey === adminKeyHeader);
     if(req.user || (env === "DEVELOPMENT" && adminKeyHeader === adminKey)){
         next();
     }
