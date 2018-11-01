@@ -1,46 +1,62 @@
+const debug = require("debug")("orm:notification");
 const { deepCopy } = require("../utils");
+const { isEmpty } = require("lodash");
+
 
 module.exports = (db) => {
-    const User = require("./userORM")(db);
+
+    const _updateNotifications = (userId, notifs) => {
+        const data = db.get();
+        const { notifications } = data;
+        const userNotifications = notifs;
+
+        const updatedNotifs = {
+            ...notifications,
+            [userId]: userNotifications
+        }
+
+        db.set({
+            ...data,
+            notifications: updatedNotifs
+        });
+    }
+
 
     const getUserNotifications = (userId) => {
         const data = db.get();
-        const { users } = data;
+        const { notifications } = data;
 
-        let notifications;
-        users.some(user => {
-            if(user.id === userId){
-                notifications = user.notifications;
-                return true;
-            }
-        });
-        return notifications;
+        // We are not trying to see whether the userID actually exists
+        return notifications[userId] || [];
     }
 
 
     const createNotification = (userId, notif) => {
         const userNotifs = getUserNotifications(userId);
 
+        if(isEmpty(userNotifs)){
+            debug("No notifications for the user", userId);
+            return {};
+        }
+
         notif.id = userNotifs.length > 0 ? userNotifs[userNotifs.length-1].id+1 : 0;
         notif.date = Date.now();
         userNotifs.push(notif);
 
-        updateNotifications(userId, userNotifs);
+        _updateNotifications(userId, userNotifs);
 
         return notif;
-    }
-
-    const updateNotifications = (userId, notifs) => {
-        const data = db.get();
-        const userIndex = User.getUserIndex(userId);
-        data.users[userIndex].notifications = notifs;
-
-        db.set(data);
     }
 
 
     const deleteNotification = (userId, notifId) => {
         const notifications = getUserNotifications(userId);
+
+        if(isEmpty(notifications)){
+            debug("No notifications for the user", userId);
+            return {};
+        }
+
         let deletedNotif = {};
         const updatedNotifs = notifications.filter((notif) => {
             if(notif.id !== notifId){
@@ -51,10 +67,17 @@ module.exports = (db) => {
             }
         });
 
-        updateNotifications(userId, updatedNotifs)
+
+        if(isEmpty(deletedNotif)){
+            debug("No notification corresponding to this id", notifId);
+            return {};
+        }
+
+        _updateNotifications(userId, updatedNotifs)
 
         return deletedNotif;
     }
+
 
     const deleteNotifications = (userId, notifArray) => {
         return notifArray.map((notifId) => {
@@ -69,6 +92,7 @@ module.exports = (db) => {
     return {
         createNotification,
         deleteNotification,
+        deleteNotifications,
         getUserNotifications,
         getNotification
     }

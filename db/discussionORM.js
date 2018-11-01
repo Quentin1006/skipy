@@ -1,5 +1,5 @@
 const { deepCopy, str } = require("../utils");
-const debug = require("debug")("orm:discussionORM");
+const debug = require("debug")("orm:discussion");
 
 module.exports = (db) => {
 
