@@ -13,10 +13,14 @@ const authenticateRequest = async (req, res, next) => {
         redirect_url,
     });
 
-    attachUserAndTokenToSession(req, regInfos.user, regInfos.token);
-    delete regInfos.token;
+    if(regInfos.user){
+        debug("We have a user, OAuth OK");
+        attachUserAndTokenToSession(req, regInfos.user, regInfos.token);
+        delete regInfos.token;
+    }
+    
 
-    res.send(regInfos);
+    res.send(regInfos.user ? regInfos.user : regInfos);
 }
 
 const checkIfUserSession = (req, res, next) => {

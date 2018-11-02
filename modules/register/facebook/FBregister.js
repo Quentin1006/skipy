@@ -38,24 +38,24 @@ module.exports = (FBoauthCreds) => {
                 const existingUser = this.checkIfUserExists(email, "email");
     
                 if(!existingUser) {
-                        const userToAdd = {
-                            id: `fb${user.id}`,
-                            firstname: user.first_name,
-                            username: user.first_name,
-                            email: user.email,
-                            lastname: user.last_name,
-                            provider: auth_infos.provider,
-                            profilepicture: user.picture.data.url,
-                            status:"",
-                            notifications: []
-                        }
-                        this.addUser(userToAdd);
-                        
-                        return {
-                            user: userToAdd,
-                            token,
-                            just_registered: true
-                        };
+                    const userToAdd = {
+                        id: `fb${user.id}`,
+                        firstname: user.first_name,
+                        username: user.first_name,
+                        email: user.email,
+                        lastname: user.last_name,
+                        provider: auth_infos.provider,
+                        profilepicture: user.picture.data.url,
+                        status:"",
+                        notifications: []
+                    }
+                    this.addUser(userToAdd);
+                    
+                    return {
+                        user: userToAdd,
+                        token,
+                        just_registered: true
+                    };
                 }
                 else {
                     return {
@@ -64,7 +64,12 @@ module.exports = (FBoauthCreds) => {
                     }
                 }
             })
-            .catch((err) => { console.log(err)});
+            .catch((err) => { 
+                return {
+                    ...err,
+                    error: "FB OAuth error"
+                }
+            })
     }
 
 
