@@ -25,6 +25,7 @@ module.exports = (db) => {
         }
 
         return {
+            id: discussion.id,
             user1: User.getUserById(discussion.user1),
             user2: User.getUserById(discussion.user2),
             content: discussion.content.map(msg => recomposeMessage(msg, data))
