@@ -7,56 +7,30 @@
 const app = require('../app');
 const debug = require('debug')('server:server');
 const io = require("../socketio");
-const http = require('http');
 const https = require("https"); 
+const redirectHttpFactory = require("../lib/redirectHttp");
 const { httpsOpts } = require("../config");
-const numCPUs = process.env.CPUS;
-const stickycluster = require("../lib/cluster/stickycluster")(numCPUs);
 
-let server;
 
 /**
  * Get port from environment and store in Express.
  */
 
 const port = normalizePort(process.env.PORT || '3001');
+
+
+redirectHttpFactory({port}).listen(80);
+
+
 app.set('port', port);
 
-// if(basiccluster.isMaster()){
-// 	basiccluster.startMaster();
-// }
+const serverHTTPS = https.createServer(httpsOpts, app);
+io(serverHTTPS);
 
-if(stickycluster.isMaster()){
-	stickycluster.startMaster(port);
-}
+serverHTTPS.on('error', onError);
+serverHTTPS.on('listening', onListening);
 
-/**
- * On démarre les workers
- */
-else {
-	/**
-	 * Create HTTP server.
-	 */
-	// app.worker = basiccluster.worker();
-	// server = https.createServer(httpsOpts, app);
-	// io(server);
-
-	// server.listen(port);
-
-	app.worker = stickycluster.getWorker();
-
-
-	server = https.createServer(httpsOpts, app);
-	stickycluster.startWorkers(server);
-	io(server);
-
-	server.on('error', onError);
-	server.on('listening', onListening);
-
-
-	
-}
-
+serverHTTPS.listen(port);
 
 
 /**
@@ -112,7 +86,7 @@ function onError(error) {
  */
 
 function onListening() {
-	const addr = server.address();
+	const addr = serverHTTPS.address();
 	const bind = typeof addr === 'string'
 		? 'pipe ' + addr
 		: 'port ' + addr.port;
