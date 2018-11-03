@@ -7,8 +7,8 @@ module.exports = (db) => {
 
     const recomposeMessage = (msg) => {
         return {
-            from : User.getUserById(msg.from).username,
-            to : User.getUserById(msg.to).username,
+            from : msg.from,
+            to : msg.to,
             date : msg.date,
             content: msg.content,
             state: db.get().messageState[msg.state]
