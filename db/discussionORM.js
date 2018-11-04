@@ -7,6 +7,7 @@ module.exports = (db) => {
 
     const recomposeMessage = (msg) => {
         return {
+            id: msg.id,
             from : msg.from,
             to : msg.to,
             date : msg.date,
