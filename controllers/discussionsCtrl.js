@@ -2,11 +2,12 @@ const db = require("../db");
 
 const postMessage = (req, res, next) => {    
     try {
-		const { from, to, content } = req.body;
+		const { to, content } = req.body;
+		const from = req.user.id;
 		const discId = parseInt(req.params.discId);
 		const message = db.addMessageToDiscussion(discId, {
-			from : parseInt(from),
-			to: parseInt(to),
+			from : parseInt(from, 10),
+			to: parseInt(to, 10),
 			content
 		});
 		res.send(message);

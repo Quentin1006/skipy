@@ -95,7 +95,7 @@ module.exports = (db) => {
         // La discussion n'existe pas;
         const disc = getDiscussion(discId);
         if(!disc){
-            debug("No discussion with thisid ", discId);
+            debug("No discussion with this id ", discId);
             return false;
         }
 
