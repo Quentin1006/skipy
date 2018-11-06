@@ -114,7 +114,7 @@ module.exports = (db) => {
         const discussionFromDb = deepCopy(data.discussions);
         const discussions = discussionFromDb.map((disc) => {
             if(disc.id === discId){
-                const id = (disc.content[disc.content.length-1].id)++;
+                const id = (disc.content[disc.content.length-1].id) + 1;
                 msg.id = id;
                 disc.content.push(msg);
             }
