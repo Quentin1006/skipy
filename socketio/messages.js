@@ -1,25 +1,46 @@
 const session = require("express-session");
 const sharedsession = require("express-socket.io-session");
 const { sessionOpts } = require("../config");
+const debug = require("debug")("socketio:messages");
 
 const db = require("../db");
 
-const socketIdToUserId = (socketId) => (Number((socketId.split("#"))[1]));
+//const socketIdToUserId = (socketId) => (Number((socketId.split("#"))[1]));
 
 // AUCUN DE CES EVENTS N'EST REELLEMENT FONCTIONNEL 
 // PLUS UN MEMO POUR SAVOIR COMMENT STRUCTURER LA SOCKET MESSAGE
 
 module.exports = (io) => {
-    io.use(sharedsession(session(sessionOpts)));
+    io.use(sharedsession(session(sessionOpts, { autoSave:true})));
+
+    io.use((socket, next) => {
+        const sess = socket.handshake.session;
+        if(!sess.user){
+            debug("No user attached to session, We close the socket");
+            socket.disconnect();
+            return;
+        }
+        next();
+    })
     
 
     io.on("connection", (socket) => {
         const sess = socket.handshake.session;
-        socket.emit("conn", socket.id);
 
-        const userId =  socketIdToUserId(socket.id); 
-        const activeDiscs = db.getUserActiveDiscussions(userId);
-        socket.emit("retrieveActiveDiscs", activeDiscs);
+        
+
+        const userId =  sess.user.id; 
+
+        // The user joins a room named after his id so its eaisier 
+        // to direct messages toward him when necessary
+        socket.join(`user#${userId}`);
+
+
+        socket.on("retrieveActiveDiscs", () => {
+            const activeDiscs = db.getUserActiveDiscussions(userId);
+            socket.emit("retrieveActiveDiscs", activeDiscs);
+        })
+        
 
         socket.on("startDiscussion", withId => {
             const createdDisc = db.addDiscussion(userId, withId);
@@ -37,8 +58,8 @@ module.exports = (io) => {
             msg.from = userId;
             
             const builtMsg = db.addMessageToDiscussion(discId, msg);
-            socket.emit("sendMessage response", builtMsg);
-            socket.to(`/messages#${receiver}`).emit("sendMessage response", builtMsg);
+            socket.emit("sendMessage response", builtMsg, discId);
+            socket.to(`user#${userId}`).emit("sendMessage response", builtMsg, discId);
         })
 
         socket.on("markAsSeen", (discId) => {
