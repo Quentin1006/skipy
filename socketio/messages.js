@@ -28,12 +28,13 @@ module.exports = (io) => {
         const sess = socket.handshake.session;
 
         
-
         const userId =  sess.user.id; 
 
         // The user joins a room named after his id so its eaisier 
         // to direct messages toward him when necessary
         socket.join(`user#${userId}`);
+
+        socket.emit("conn", `user#${userId}`);
 
 
         socket.on("retrieveActiveDiscs", () => {
@@ -59,7 +60,7 @@ module.exports = (io) => {
             
             const builtMsg = db.addMessageToDiscussion(discId, msg);
             socket.emit("sendMessage response", builtMsg, discId);
-            socket.to(`user#${userId}`).emit("sendMessage response", builtMsg, discId);
+            socket.to(`user#${receiver}`).emit("sendMessage response", builtMsg, discId);
         })
 
         socket.on("markAsSeen", (discId) => {

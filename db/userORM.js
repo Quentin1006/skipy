@@ -67,7 +67,7 @@ module.exports = (db) => {
             const withId = disc.user1 === id ? disc.user2 : disc.user1;
             const lastMessage = disc.content[disc.content.length-1];
 
-            const msg = lastMessage ? recomposeMessage(lastMessage, data) :  "";
+            const msg = lastMessage ? recomposeMessage(lastMessage, data) :  {};
 
             return {
                 id: disc.id,
