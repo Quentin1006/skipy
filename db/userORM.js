@@ -58,21 +58,43 @@ module.exports = (db) => {
     }
 
 
+
+    const _getUnreadMessages = (fromDiscContent) => {
+        const unreadMessages = {count:0};
+        const contentLen = fromDiscContent.length;
+
+        for(let i = contentLen - 1; i>= 0; i--){
+            const mess = fromDiscContent[i];
+            if(mess.state < 2){
+                unreadMessages.count++;
+            }
+            else {
+                break;
+            }
+        }
+
+        return unreadMessages.count;
+    }
+
+
     const getUserActiveDiscussions = (userId) => {
         const id = str(userId);
         const data = db.get();
-        const discussions = data.discussions.filter(disc => (str(disc.user1) === id || str(disc.user2) === id))
+        const userDiscs = data.discussions.filter(disc => (str(disc.user1) === id || str(disc.user2) === id))
 
-        return discussions.map(disc => {
+        return userDiscs.map(disc => {
             const withId = disc.user1 === id ? disc.user2 : disc.user1;
             const lastMessage = disc.content[disc.content.length-1];
 
+            // Get the number of unread messages
+            const unreadMessagesCount = _getUnreadMessages(disc.content);
             const msg = lastMessage ? recomposeMessage(lastMessage, data) :  {};
 
             return {
                 id: disc.id,
                 with: getUserById(withId),
-                lastMessage: msg
+                lastMessage: msg,
+                unreadMessagesCount
             }
         })
     }
