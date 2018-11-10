@@ -65,7 +65,7 @@ module.exports = (io) => {
 
         socket.on("markAsSeen", (discId) => {
             const done = db.setAllDiscussionsMessagesAsRead(discId);
-            socket.emit("markAsSeen response", done);
+            socket.emit("markAsSeen response", discId, done);
         })
 
 

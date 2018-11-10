@@ -59,13 +59,17 @@ module.exports = (db) => {
 
 
 
-    const _getUnreadMessages = (fromDiscContent) => {
+    const _getUnreadMessages = (fromDiscContent, userId) => {
         const unreadMessages = {count:0};
         const contentLen = fromDiscContent.length;
 
         for(let i = contentLen - 1; i>= 0; i--){
             const mess = fromDiscContent[i];
-            if(mess.state < 2){
+            // Si c'est un message de l'user on passe au suivant
+            if(str(userId) === str(mess.from))
+                continue;
+
+            if(mess.state < 2 ){
                 unreadMessages.count++;
             }
             else {
@@ -87,7 +91,7 @@ module.exports = (db) => {
             const lastMessage = disc.content[disc.content.length-1];
 
             // Get the number of unread messages
-            const unreadMessagesCount = _getUnreadMessages(disc.content);
+            const unreadMessagesCount = _getUnreadMessages(disc.content, id);
             const msg = lastMessage ? recomposeMessage(lastMessage, data) :  {};
 
             return {
