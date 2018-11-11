@@ -43,11 +43,6 @@ module.exports = (io) => {
         })
         
 
-        socket.on("startDiscussion", withId => {
-            const createdDisc = db.addDiscussion(userId, withId);
-            socket.emit("startDiscussion response", createdDisc);
-        })
-
         socket.on("getDiscussion", (discId) => {
             const disc = db.getDiscussion(discId);
             socket.emit("getDiscussion response", disc);
@@ -58,6 +53,7 @@ module.exports = (io) => {
             // on ne laisse pas la chance au client de modifier l'emetteur
             msg.from = userId;
             
+            db.addDiscussionIfNotExist(userId, receiver);
             const builtMsg = db.addMessageToDiscussion(discId, msg);
             socket.emit("sendMessage response", builtMsg, discId);
             socket.to(`user#${receiver}`).emit("sendMessage response", builtMsg, discId);

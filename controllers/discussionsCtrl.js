@@ -28,7 +28,7 @@ const postDiscussion = (req, res, next) => {
 		const discussionWithUsers = db.discussionExists(...users);
 		const discussion = discussionWithUsers.length > 0 
 						 	? discussionWithUsers[0] 
-						 	: db.addDiscussion(...users);
+						 	: db.addDiscussionIfNotExist(...users);
 	
 		res.send(discussion);
 	}

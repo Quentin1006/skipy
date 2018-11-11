@@ -47,7 +47,7 @@ module.exports = (db) => {
     }
 
 
-    const addDiscussion = (user1, user2) => {
+    const addDiscussionIfNotExist = (user1, user2) => {
         // si la discussion existe déja on la retourne et on s'arrete la 
         const disc = discussionExists(user1, user2) || {};
         if(disc.id){
@@ -93,14 +93,15 @@ module.exports = (db) => {
     // On devrait aussi vérifier que les participants correspondent bien a la discussion
     const addMessageToDiscussion = (discId, msg) => {
         // La discussion n'existe pas;
-        const disc = getDiscussion(discId);
-        if(!disc){
-            debug("No discussion with this id ", discId);
-            return false;
-        }
+        const existingDisc = getDiscussion(discId);
 
         if(!discUsersMatchMsgUsers(disc, msg)){
             debug("Discussion participants doesnt match msg participants");
+            return false;
+        }
+
+        if(!disc){
+            debug("No discussion with this id ", discId);
             return false;
         }
             
@@ -158,7 +159,7 @@ module.exports = (db) => {
     return {
         getDiscussion,
         discussionExists,
-        addDiscussion,
+        addDiscussionIfNotExist,
         addMessageToDiscussion,
         setAllDiscussionsMessagesAsRead
     }
