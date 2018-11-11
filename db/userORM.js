@@ -86,7 +86,7 @@ module.exports = (db) => {
         const data = db.get();
         const userDiscs = data.discussions.filter(disc => (str(disc.user1) === id || str(disc.user2) === id))
 
-        return userDiscs.map(disc => {
+        const activeDiscs = userDiscs.map(disc => {
             const withId = disc.user1 === id ? disc.user2 : disc.user1;
             const lastMessage = disc.content[disc.content.length-1];
 
@@ -98,9 +98,16 @@ module.exports = (db) => {
                 id: disc.id,
                 with: getUserById(withId),
                 lastMessage: msg,
-                unreadMessagesCount
+                unreadMessagesCount,
+                lastUpdate: msg.date
             }
-        })
+        });
+
+        return activeDiscs.sort((a, b) => {
+            console.log(b.lastUpdate, a.lastUpdate,  b.lastUpdate > a.lastUpdate)
+            return b.lastUpdate > a.lastUpdate
+        });
+
     }
 
 
