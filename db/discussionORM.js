@@ -93,17 +93,21 @@ module.exports = (db) => {
     // On devrait aussi vérifier que les participants correspondent bien a la discussion
     const addMessageToDiscussion = (discId, msg) => {
         // La discussion n'existe pas;
-        const existingDisc = getDiscussion(discId);
+        const disc = getDiscussion(discId);
+
+        if(!disc){
+            debug("No discussion with this id ", discId);
+            return false;
+        }
+
+
 
         if(!discUsersMatchMsgUsers(disc, msg)){
             debug("Discussion participants doesnt match msg participants");
             return false;
         }
 
-        if(!disc){
-            debug("No discussion with this id ", discId);
-            return false;
-        }
+        
             
 
         const data = db.get();
