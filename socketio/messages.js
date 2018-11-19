@@ -60,7 +60,8 @@ module.exports = (io) => {
 
 
         socket.on("matchFriends", (value, nbSuggestion) => {
-            return db.getMatchingFriends(value, nbSuggestion);
+            const matches = db.getMatchingFriends(userId, value, nbSuggestion);
+            socket.emit("matchFriends response", matches);
         })
 
         socket.on("sendMessage", (discId, msg) => {
