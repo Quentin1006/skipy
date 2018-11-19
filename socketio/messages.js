@@ -7,8 +7,11 @@ const db = require("../db");
 
 //const socketIdToUserId = (socketId) => (Number((socketId.split("#"))[1]));
 
-// AUCUN DE CES EVENTS N'EST REELLEMENT FONCTIONNEL 
-// PLUS UN MEMO POUR SAVOIR COMMENT STRUCTURER LA SOCKET MESSAGE
+const getDiscByDiscIdOrUsersId = (discOrFriendId, by) => {
+    return  (by === "users")
+            ? db.discussionExists(userId, discOrFriendId)
+            : db.getDiscussion(discOrFriendId);
+}
 
 module.exports = (io) => {
     io.use(sharedsession(session(sessionOpts, { autoSave:true})));
@@ -41,12 +44,24 @@ module.exports = (io) => {
             const activeDiscs = db.getUserActiveDiscussions(userId);
             socket.emit("retrieveActiveDiscs", activeDiscs);
         })
+
+        socket.on("createDiscussion", (discOrFriendId, by) => {
+            const disc = getDiscByDiscIdOrUsersId(discOrFriendId, by);
+            
+            socket.emit("createDiscussion response", disc);
+        });
         
 
-        socket.on("getDiscussion", (discId) => {
-            const disc = db.getDiscussion(discId);
+        socket.on("getDiscussion", (discOrFriendId, by) => {
+            const disc = getDiscByDiscIdOrUsersId(discOrFriendId, by);
+            
             socket.emit("getDiscussion response", disc);
         });
+
+
+        socket.on("matchFriends", (value, nbSuggestion) => {
+            return db.getMatchingFriends(value, nbSuggestion);
+        })
 
         socket.on("sendMessage", (discId, msg) => {
             const receiver = msg.to;

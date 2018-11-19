@@ -1,4 +1,5 @@
 const { deepCopy, str } = require("../utils");
+const { deburr } = require("lodash");
 const debug = require("debug")("orm:discussion");
 
 module.exports = (db) => {
@@ -160,11 +161,75 @@ module.exports = (db) => {
 
     }
 
+    const _isUserFriend = (id, friendsId) => {
+        return friendsId.indexOf(id) >= 0;
+    }
+
+    const _simplifyValue = (value) => {
+        return deburr(value.trim()).toLowerCase();
+    }
+
+    const _matchSuggestion = (user, value) => {
+        const firstname = _simplifyValue(user.firstname);
+        const lastname = _simplifyValue(user.lastname);
+        const sanitizedValue = _simplifyValue(value);
+        const fullname = `${firstname} ${lastname}`;
+
+        const regex = new RegExp(`^${sanitizedValue}`);
+
+        return [firstname, lastname, fullname].some(name => name.search(regex) >= 0);
+    }
+
+
+    const getMatchingSuggestions = (id, value, nbToReturn=3) => {
+        if(value.length === 0){
+            return [];
+        }
+
+        const { friendships, users } = db.get();
+        const idStr = str(id);
+        const userFriendsId = [];
+        const suggestions = [];
+
+        let suggestionsFound = 0;
+
+        for (fship of friendships){
+            const f1 = str(fship.friend1);
+            const f2 = str(fship.friend2);
+
+            if(f1 === idStr)
+                userFriendsId.push(f2);
+
+            if(f2 === idStr)
+                userFriendsId.push(f1);
+        }
+        
+        for(user of users) {
+            // We got the count, no need to go further
+            if(suggestionsFound >= nbToReturn){
+                break;
+            } 
+
+            if(!_matchSuggestion(user, value)){
+               continue;
+            }
+
+            if(_isUserFriend(str(user.id), userFriendsId)){
+                suggestions.push(user);
+                suggestionsFound++;
+            }
+        }
+
+        return suggestions;
+
+    }
+
     return {
         getDiscussion,
         discussionExists,
         addDiscussionIfNotExist,
         addMessageToDiscussion,
-        setAllDiscussionsMessagesAsRead
+        setAllDiscussionsMessagesAsRead,
+        getMatchingSuggestions
     }
 }
