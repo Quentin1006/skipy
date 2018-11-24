@@ -44,7 +44,7 @@ const logout = (req, res, next) => {
     delete req.session.user;
 
     // On renvoie ce qu'il reste de l'user en espérant que ce soit le null
-    res.send(req.user)
+    res.send(req.user || {});
 }
 
 module.exports = {

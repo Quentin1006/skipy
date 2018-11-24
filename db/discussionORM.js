@@ -120,7 +120,9 @@ module.exports = (db) => {
         const discussionFromDb = deepCopy(data.discussions);
         const discussions = discussionFromDb.map((disc) => {
             if(disc.id === discId){
-                const id = (disc.content[disc.content.length-1].id) + 1;
+                const { content } = disc;
+                const currentId = content.length > 0 && content[content.length - 1].id;
+                const id =  (currentId !== undefined) ? currentId + 1 : 0;
                 msg.id = id;
                 disc.content.push(msg);
             }
@@ -137,14 +139,17 @@ module.exports = (db) => {
 
     }
 
-    const setAllDiscussionsMessagesAsRead = (discId) => {
+    const setAllDiscussionsMessagesAsRead = (discId, userId) => {
         const data = db.get();
-        const discussionsCopy = deepCopy(data.discussions);
+        const currentDiscussions = data.discussions;
 
-        const discussions = discussionsCopy.map(disc => {
+
+        const discussions = currentDiscussions.map(disc => {
             if(str(disc.id) === str(discId)){
                 disc.content.map(msg => {
-                    msg.state = 2;
+                    if(str(userId) === str(msg.to))
+                        msg.state = 2;
+                    
                     return msg;
                 })
             }
@@ -181,7 +186,7 @@ module.exports = (db) => {
     }
 
 
-    const getMatchingSuggestions = (id, value, nbToReturn=3) => {
+    const getMatchingSuggestions = (id, value, nbToReturn) => {
         if(value.length === 0){
             return [];
         }

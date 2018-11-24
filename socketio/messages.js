@@ -59,24 +59,35 @@ module.exports = (io) => {
         });
 
 
-        socket.on("matchFriends", (value, nbSuggestion) => {
-            const matches = db.getMatchingFriends(userId, value, nbSuggestion);
+        socket.on("matchFriends", (value, nbSuggestions) => {
+            const matches = db.getMatchingSuggestions(userId, value, nbSuggestions || 3);
             socket.emit("matchFriends response", matches);
         })
 
         socket.on("sendMessage", (discId, msg) => {
             const receiver = msg.to;
+
+            if(!receiver)
+                return;
+
             // on ne laisse pas la chance au client de modifier l'emetteur
             msg.from = userId;
             
-            db.addDiscussionIfNotExist(userId, receiver);
-            const builtMsg = db.addMessageToDiscussion(discId, msg);
-            socket.emit("sendMessage response", builtMsg, discId);
-            socket.to(`user#${receiver}`).emit("sendMessage response", builtMsg, discId);
+            const disc = db.addDiscussionIfNotExist(userId, receiver);
+            const builtMsg = db.addMessageToDiscussion(disc.id, msg);
+
+            const resp = {
+                builtMsg, 
+                discUpdatedId: disc.id, 
+                discRequestedId: discId
+            };
+
+            socket.emit("sendMessage response", resp);
+            socket.to(`user#${receiver}`).emit("sendMessage response", resp);
         })
 
         socket.on("markAsSeen", (discId) => {
-            const done = db.setAllDiscussionsMessagesAsRead(discId);
+            const done = db.setAllDiscussionsMessagesAsRead(discId, userId);
             socket.emit("markAsSeen response", discId, done);
         })
 
