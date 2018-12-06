@@ -1,6 +1,7 @@
 const { deepCopy, str } = require("../utils");
 const { deburr } = require("lodash");
 const debug = require("debug")("orm:discussion");
+const uniqid = require('uniqid');
 
 module.exports = (db) => {
 
@@ -13,6 +14,7 @@ module.exports = (db) => {
             to : msg.to,
             date : msg.date,
             content: msg.content,
+            uploads: msg.uploads || [],
             state: db.get().messageState[msg.state]
         }
     }
@@ -110,7 +112,7 @@ module.exports = (db) => {
 
         
             
-
+        let builtMsg = {};
         const data = db.get();
         
         // we complete the msg obj before adding it to the db
@@ -124,7 +126,25 @@ module.exports = (db) => {
                 const currentId = content.length > 0 && content[content.length - 1].id;
                 const id =  (currentId !== undefined) ? currentId + 1 : 0;
                 msg.id = id;
-                disc.content.push(msg);
+
+                const uid = uniqid();
+                const uploads = msg.uploads.length > 0
+                                ? msg.uploads.map(({id,size, type, preview}) => ({
+                                    id: `${id}-${uid}`,
+                                    name: `upload-${id}-${uid}`, 
+                                    size,
+                                    type,
+                                    src: preview
+                                }))
+                                : [];
+                
+                builtMsg = {
+                    ...msg,
+                    uploads
+                }
+                disc.content.push(builtMsg);
+
+
             }
             return disc;
         });
@@ -135,7 +155,7 @@ module.exports = (db) => {
 
         });
 
-        return msg;
+        return builtMsg;
 
     }
 
