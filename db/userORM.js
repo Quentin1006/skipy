@@ -33,10 +33,10 @@ module.exports = (db) => {
 
     const getUserIndex = (userId) => {
         const data = db.get();
-        return data.users.findIndex(user => userId = user.id);
+        return data.users.findIndex(user => userId === user.id);
     }
 
-    const checkIfUserExists = (value, crit) => {
+    const checkIfUserExists = (value, crit="id") => {
         const data = db.get();
         const { users } = data;
 
@@ -46,15 +46,20 @@ module.exports = (db) => {
     // Peut etre devrait on verifier si l'utilisateur 
     // existe pour retourner une reponse plus precise
     const getUserFriends = (userId) => {
+        userId = String(userId);
         const data = db.get();
-        const friendships = data.friendships.filter(fsp => (
-            str(fsp.friend1) === str(userId) || str(fsp.friend2) === str(userId)
-        ))
+        const { friendships } = data
+        
+        const userFriendsId = Object.keys(friendships).reduce((acc, fsp) => {
+            const usersId = fsp.split('#');
+            if(usersId.includes(userId)){
+                const friendId = usersId.filter(id => id !== userId)[0];
+                acc.push(friendId);
+            }
+            return acc;
+        }, [])
 
-        return friendships.map(fsp => {
-            const friendId = fsp.friend1 === userId ? fsp.friend2 : fsp.friend1;
-            return getUserById(friendId);
-        })
+        return userFriendsId.map(friendId => getUserById(friendId));
     }
 
 
