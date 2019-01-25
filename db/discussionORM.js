@@ -53,7 +53,7 @@ module.exports = (db) => {
     const addDiscussionIfNotExist = (user1, user2) => {
         // si la discussion existe déja on la retourne et on s'arrete la 
         const disc = discussionExists(user1, user2) || {};
-        if(disc.id){
+        if(disc.id >= 0){
             debug("discussion already exists");
             return disc;
         }
@@ -61,7 +61,10 @@ module.exports = (db) => {
 
         const data = db.get();
         const discussions = data.discussions.slice(0);
-        const newId = discussions[discussions.length - 1].id + 1;
+        const newId = discussions.length > 0 
+                    ? discussions[discussions.length - 1].id + 1
+                    : 0;
+
         const discussion = {
             id: newId,
             user1,
@@ -218,9 +221,9 @@ module.exports = (db) => {
 
         let suggestionsFound = 0;
 
-        for (fship of friendships){
-            const f1 = str(fship.friend1);
-            const f2 = str(fship.friend2);
+        for (fship of Object.keys(friendships)){
+            const f1 = str(friendships[fship].user1Id);
+            const f2 = str(friendships[fship].user2Id);
 
             if(f1 === idStr)
                 userFriendsId.push(f2);
