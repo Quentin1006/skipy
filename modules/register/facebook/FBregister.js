@@ -46,8 +46,11 @@ module.exports = (FBoauthCreds) => {
                         lastname: user.last_name,
                         provider: auth_infos.provider,
                         profilepicture: user.picture.data.url,
-                        status:"",
-                        notifications: []
+                        registered: {
+                            date: Date.now(),
+                            age: 0
+                        },
+                        role: 10
                     }
                     this.addUser(userToAdd);
                     
