@@ -20,6 +20,7 @@
     "farmhash": "^2.1.0",
     "fb": "^2.0.0",
     "http-errors": "~1.6.2",
+    "joi": "^14.3.1",
     "morgan": "^1.9.1",
     "nodemailer": "^4.6.8",
     "nodemailer-html-to-text": "^3.0.0",

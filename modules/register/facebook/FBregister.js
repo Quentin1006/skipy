@@ -1,4 +1,5 @@
-const FacebookOauth = require("../../../lib/OAuth/facebook/FBOauth")
+const FacebookOauth = require("../../../lib/OAuth/facebook/FBOauth");
+const User = require("../../../models/User");
 
 
 const checkIfUserExists = () => {
@@ -38,20 +39,20 @@ module.exports = (FBoauthCreds) => {
                 const existingUser = this.checkIfUserExists(email, "email");
     
                 if(!existingUser) {
-                    const userToAdd = {
+                    const userToAdd = new User({
                         id: `fb${user.id}`,
                         firstname: user.first_name,
                         username: user.first_name,
                         email: user.email,
                         lastname: user.last_name,
                         provider: auth_infos.provider,
-                        profilepicture: user.picture.data.url,
+                        profilepic: user.picture.data.url,
                         registered: {
                             date: Date.now(),
                             age: 0
                         },
                         role: 10
-                    }
+                    })
                     this.addUser(userToAdd);
                     
                     return {
@@ -62,7 +63,7 @@ module.exports = (FBoauthCreds) => {
                 }
                 else {
                     return {
-                        user: existingUser,
+                        user: new User(existingUser),
                         token  
                     }
                 }
