@@ -39,7 +39,7 @@ module.exports = (FBoauthCreds) => {
                 const existingUser = this.checkIfUserExists(email, "email");
     
                 if(!existingUser) {
-                    const userToAdd = new User({
+                    const userToAdd = User.validate({
                         id: `fb${user.id}`,
                         firstname: user.first_name,
                         username: user.first_name,
@@ -56,7 +56,7 @@ module.exports = (FBoauthCreds) => {
                     this.addUser(userToAdd);
                     
                     return {
-                        user: userToAdd,
+                        user: new User({...userToAdd}),
                         token,
                         just_registered: true
                     };
