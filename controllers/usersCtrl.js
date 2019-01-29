@@ -49,10 +49,24 @@ const deleteNotification = (req, res, next) => {
 }
 
 
-const sendUser = (req, res, next) =>{
+const sendUser = (req, res, next) => {
 	try {
     	const id = req.params.id;
     	const user = db.getUserById(id);
+
+    	res.send(user);
+  	}
+  	catch(e){
+    	console.log(e);
+    	next(e);
+  	}
+}
+
+const updateUser = (req, res, next) => {
+	try {
+		const id = req.params.id === "me" ? req.user.id : req.params.id;
+		const fields = req.body;
+    	const user = db.updateUser(id, fields);
 
     	res.send(user);
   	}

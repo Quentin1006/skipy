@@ -7,6 +7,7 @@ const usersCtrl = require("../controllers/usersCtrl");
 /* GET users listing. */
 
 router.get('/:id', usersCtrl.sendUser);
+router.post("/:id/update", usersCtrl.updateUser);
 router.get("/:id/friends", usersCtrl.sendUserFriends);
 router.get("/:id/activeDiscussions", usersCtrl.sendUserActiveDiscussions);
 

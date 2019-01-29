@@ -1,17 +1,21 @@
 const { str, deepCopy } = require("../utils");
+const User = require("../models/User");
 
 module.exports = (db) => {
 
     const getUserById = (userId) => {
         const data = db.get();
         const {users} = data;
-        return (users.filter((usr) => str(usr.id) === str(userId) ))[0];
+        const user = (users.filter((usr) => str(usr.id) === str(userId) ))[0];
+        return new User(user);
     }
 
     const getUserByMail = (email) => {
         const data = db.get();
         const { users } = data;
-        return (users.filter((usr) => usr.email === email ))[0]
+        const user = (users.filter((usr) => usr.email === email ))[0];
+        
+        return new User(user);
     }
 
     const addUser = (user) => {
@@ -29,6 +33,30 @@ module.exports = (db) => {
             ...data,
             users
         })
+    }
+
+    const updateUser = (userId, fields) => {
+        const data = db.get();
+        let updatedUser = {};
+
+        const users = data.users.map(user => {
+            if(str(user.id) === str(userId)){
+                updatedUser = User.validateUser({
+                    ...user,
+                    ...fields
+                });
+                return updatedUser;
+            }
+            return user;
+        });
+
+        db.set({
+            ...data,
+            users
+        });
+
+        return updatedUser;
+
     }
 
     const getUserIndex = (userId) => {
@@ -159,6 +187,7 @@ module.exports = (db) => {
         getUserDiscussions,
         recomposeMessage,
         addUser,
+        updateUser,
         checkIfUserExists
     }
 
