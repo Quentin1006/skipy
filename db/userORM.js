@@ -55,7 +55,7 @@ module.exports = (db) => {
             users
         });
 
-        return updatedUser;
+        return new User(updatedUser);
 
     }
 

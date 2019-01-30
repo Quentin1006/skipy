@@ -1,7 +1,49 @@
 const db = require("../db");
+const uniqid = require("uniqid");
+const path = require("path");
+const uploadFolder = "D:/CODE/serverSkipy/upload";
 
 
-const getUserId = (req) => (req.params.id === "me" ? req.user.id : req.params.id)
+const getUserId = (req) => (req.params.id === "me" ? req.user.id : req.params.id);
+
+const mimeToExt = {"image/jpeg":".jpg", "image/png":".png", "image/gif":".gif"}
+
+const _handleUpload = (fieldname, upload={}, acceptedMimetypes=mimeToExt) => {
+	if(Object.keys(acceptedMimetypes).indexOf(upload.mimetype) < 0) return false;
+	const name = uniqid();
+	const ext= acceptedMimetypes[upload.mimetype];
+	const path_ = `/${fieldname}/${name}${ext}`;
+
+	return path_;
+} 
+
+const getUploadPaths = (uploads) => {
+	return Object.keys(uploads || []).reduce((acc, fieldname) => {
+		const upload = uploads[fieldname]
+		return {
+			...acc,
+			[fieldname]: _handleUpload(fieldname, upload)
+		}
+	}, {})
+	
+}
+
+const _copyToUploadFolder = (uploadPaths, uploads) => {
+	return Promise.all(
+		Object.entries(uploadPaths).map(([fieldname, fileUpload]) => {
+			const upload = uploads[fieldname];
+			
+			return new Promise((resolve, reject) => {
+				upload.mv(uploadFolder+fileUpload, (err) => {
+					if(err) return reject(err);
+					return resolve();
+				})
+			})
+			
+		})
+	)
+}
+
 
 
 const addNotification = (req, res, next) => {
@@ -66,13 +108,22 @@ const sendUser = (req, res, next) => {
   	}
 }
 
+
+
 const updateUser = (req, res, next) => {
 	try {
 		const id = getUserId(req);
 		const fields = req.body;
-    	const user = db.updateUser(id, fields);
 
-    	res.send(user);
+		const uploadPaths = getUploadPaths(req.files)
+		
+		_copyToUploadFolder(uploadPaths, req.files)
+		.then(() => {
+			const user = db.updateUser(id, {...fields, ...uploadPaths});
+			res.send(user);
+		})
+
+    	
   	}
   	catch(e){
     	console.log(e);

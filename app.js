@@ -7,9 +7,9 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const session = require('express-session');
-const { sessionOpts } = require("./config");
 const cors = require("cors");
-const { corsOpts } = require("./config");
+const fileUpload = require("express-fileupload");
+const { sessionOpts, corsOpts, uploadOpts } = require("./config");
 
 const indexRouter = require('./routes');
 
@@ -28,7 +28,9 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'upload')));
 
-app.use(session(sessionOpts))
+app.use(session(sessionOpts));
+
+app.use(fileUpload(uploadOpts));
 
 app.use(cors(corsOpts));
 
