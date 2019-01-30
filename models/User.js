@@ -1,8 +1,7 @@
 const Joi = require("joi");
-const { join } = require("path")
 const { hostname, protocol } = require("../config");
 const defaultProfilepicPath = "/ppicture/random.jpg";
-const defaultLadnscapePicturePath = "/laquent_landscape.jpg";
+const defaultLandscapePicturePath = "/laquent_landscape.jpg";
 const userRole = 10;
 
 
@@ -27,19 +26,28 @@ const UserSchema = Joi.object().keys({
                     .required(),
     landscapePicture: Joi.string()
                     .uri({allowRelative: true})
-                    .default(defaultLadnscapePicturePath),
+                    .default(defaultLandscapePicturePath),
     role: Joi.number().default(userRole),
     provider: Joi.string().required(),
     nat: Joi.string().max(30)  
 })
 
+/**
+ * The purpose of this class is to validate the structure of the model
+ * By using the static method valdate user before adding it to the db
+ * And use the constructor before sending it to the client
+ */
 class User {
     constructor(userObj){
         const user = User.validateUser(userObj);
         Object.keys(user).map(info => {
             this[info] = user[info]
         });
-        this._addDomainToProfilepic();
+        this._addDomainToPic("profilepic");
+        this._addDomainToPic("landscapePicture");
+
+
+        this._addDomainToPic = this._addDomainToPic.bind(this)
 
     }
 
@@ -53,10 +61,10 @@ class User {
     }
 
 
-
-    _addDomainToProfilepic(){
-        if(!this.profilepic.match(/^http/)){
-            this.profilepic = protocol + "://" + join(hostname, this.profilepic);
+     _addDomainToPic(picturePath){
+        if(!this[picturePath].match(/^http/)){
+            const p = (hostname +"/"+this[picturePath]).replace(/\/\//g, "/");
+            this[picturePath] = protocol + "://" + p
         }
     }
 }
