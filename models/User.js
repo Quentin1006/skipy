@@ -43,9 +43,11 @@ class User {
         Object.keys(user).map(info => {
             this[info] = user[info]
         });
-        this._addDomainToPic("profilepic");
-        this._addDomainToPic("landscapePicture");
 
+        ["profilepic", "landscapePicture"].map(pic => {
+            this._addDomainToPic(pic);
+        })
+        
 
         this._addDomainToPic = this._addDomainToPic.bind(this)
 
