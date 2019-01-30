@@ -1,8 +1,12 @@
 const db = require("../db");
 
+
+const getUserId = (req) => (req.params.id === "me" ? req.user.id : req.params.id)
+
+
 const addNotification = (req, res, next) => {
 	try {
-		const userId = req.params.id;
+		const userId = getUserId(req);
 		const notif = JSON.parse(req.body.notif);
 
 		const addedNotif = db.createNotification(userId, notif);
@@ -20,7 +24,7 @@ const addNotification = (req, res, next) => {
 
 const getNotifications = (req, res, next) => {
 	try {
-    	const userId = req.params.id;
+    	const userId = getUserId(req);
     	const notifs = db.getUserNotifications(userId);
 
     	res.send(notifs);
@@ -33,7 +37,7 @@ const getNotifications = (req, res, next) => {
 
 const deleteNotification = (req, res, next) => {
 	try {
-    	const userId = req.params.id;
+    	const userId = getUserId(req);
 		const notifId = parseInt(req.params.notifId);
 		
 		const deletedNotif = db.deleteNotification(userId, notifId);
@@ -51,7 +55,7 @@ const deleteNotification = (req, res, next) => {
 
 const sendUser = (req, res, next) => {
 	try {
-    	const id = req.params.id;
+    	const id = getUserId(req);
     	const user = db.getUserById(id);
 
     	res.send(user);
@@ -64,7 +68,7 @@ const sendUser = (req, res, next) => {
 
 const updateUser = (req, res, next) => {
 	try {
-		const id = req.params.id === "me" ? req.user.id : req.params.id;
+		const id = getUserId(req);
 		const fields = req.body;
     	const user = db.updateUser(id, fields);
 
@@ -78,7 +82,7 @@ const updateUser = (req, res, next) => {
 
 const sendUserFriends = (req, res, next) => {
 	try {
-		const id = req.params.id;
+		const id = getUserId(req);
 		const friendships = db.getUserFriends(id);
 
 		res.send(friendships);
@@ -91,7 +95,7 @@ const sendUserFriends = (req, res, next) => {
 
 const sendUserActiveDiscussions = (req, res, next) => {
 	try {
-		const id = req.params.id;
+		const id = getUserId(req);
 		const activeDiscussions = db.getUserActiveDiscussions(id);
 
 		res.send(activeDiscussions);
@@ -105,7 +109,7 @@ const sendUserActiveDiscussions = (req, res, next) => {
 
 const sendUserDiscussions = (req, res, next) => {
 	try {
-		const id = parseInt(req.params.id);
+		const id = parseInt(getUserId(req));
 		const discussions = db.getUserActiveDiscussions(id);
 
 		res.send(discussions);
@@ -118,7 +122,8 @@ const sendUserDiscussions = (req, res, next) => {
 
 module.exports = {
     sendUserDiscussions,
-    sendUser,
+	sendUser,
+	updateUser,
     sendUserActiveDiscussions,
     sendUserFriends,
     getNotifications,
