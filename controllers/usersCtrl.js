@@ -32,7 +32,7 @@ const _copyToUploadFolder = (uploadPaths, uploads) => {
 	return Promise.all(
 		Object.entries(uploadPaths).map(([fieldname, fileUpload]) => {
 			const upload = uploads[fieldname];
-			
+
 			return new Promise((resolve, reject) => {
 				upload.mv(uploadFolder+fileUpload, (err) => {
 					if(err) return reject(err);
@@ -120,6 +120,8 @@ const updateUser = (req, res, next) => {
 		_copyToUploadFolder(uploadPaths, req.files)
 		.then(() => {
 			const user = db.updateUser(id, {...fields, ...uploadPaths});
+			req.session.user = user;
+			req.session.save();
 			res.send(user);
 		})
 
