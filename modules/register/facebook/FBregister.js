@@ -24,7 +24,7 @@ module.exports = (FBoauthCreds) => {
 
         let token = "";
         if(auth_infos.auth_type === "code"){
-            await FBO.getAccessTokenFromCode(auth_infos.code, auth_infos.redirect_uri)
+            await FBO.getAccessTokenFromCode(auth_infos.token_or_code, auth_infos.redirect_uri)
                 .then((res) => token = res.access_token)
                 .catch((err) => { throw(err)});
         }
