@@ -1,8 +1,12 @@
 // Insérer ici les stratégies d'authentification des providers désirés
 // les ajouter ensuite dans dans la boucle switch 
-const creds = require("../../config").oauth;
+const config = require("../../config")
+const creds = config.oauth;
 const FBcreds = creds.facebook;
-const { registerWithFB, use } = require("./facebook/FBregister")(FBcreds);
+const { getSessions, maxAvailableSessions } = config;
+const { registerWithFB, use: fbUse } = require("./facebook/FBregister")(FBcreds);
+const { registerWithFake, use: fkUse } = require("./fake/registerWithFake")(maxAvailableSessions);
+
 const db = require("../../db");
 
 const register = async (authInfos) => {
@@ -11,13 +15,17 @@ const register = async (authInfos) => {
     
     switch(provider) {
         case "facebook":
-            use("checkIfUserExists", db.checkIfUserExists);
-            use("addUser", db.addUser);
-            await registerWithFB(authInfos)
-            .then(res => {
-                registerInfos = res;
-            });
+            fbUse("checkIfUserExists", db.checkIfUserExists);
+            fbUse("addUser", db.addUser);
+            registerInfos = await registerWithFB(authInfos)
             break;
+
+        case "fake": 
+            fkUse("getUserById", db.getUserById);
+            fkUse("getSessions", getSessions);
+            registerInfos = await registerWithFake(authInfos);
+            break;
+
         default:
             console.log("Unknown provider");
             break;
