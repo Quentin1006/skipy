@@ -1,22 +1,36 @@
 const { str, deepCopy } = require("../utils");
+const comparator = require("../lib/comparator");
 const User = require("../models/User");
 
 module.exports = (db) => {
 
-    const getUserById = (userId) => {
+    const getUsers = (filters={}, compare=comparator) => {
         const data = db.get();
         const {users} = data;
-        const user = (users.filter((usr) => str(usr.id) === str(userId) ))[0];
-        return new User(user);
+
+        const filteredUsers = users.filter(usr => {
+            return Object.keys(filters).every(crit => {
+                const [
+                    usrCrit, 
+                    filtersCrit
+                ] = crit.split(".")
+                    .reduce((acc, key) => [acc[0][key], acc[1]], [usr, filters[crit]])
+
+                return compare(usrCrit, filtersCrit);
+            })
+        })
+        return filteredUsers.map(usr => new User(usr))
     }
 
-    const getUserByMail = (email) => {
-        const data = db.get();
-        const { users } = data;
-        const user = (users.filter((usr) => usr.email === email ))[0];
-        
-        return new User(user);
+    const getUserById = (id) => {
+        return getUsers({id})[0];
     }
+
+
+    const getUserByMail = (email) => {
+        return getUsers({email})[0];
+    }
+
 
     const addUser = (user) => {
         const data = db.get();
@@ -34,6 +48,7 @@ module.exports = (db) => {
             users
         })
     }
+
 
     const updateUser = (userId, fields) => {
         const data = db.get();
@@ -59,6 +74,7 @@ module.exports = (db) => {
 
     }
 
+
     const getUserIndex = (userId) => {
         const data = db.get();
         return data.users.findIndex(user => userId === user.id);
@@ -70,6 +86,7 @@ module.exports = (db) => {
 
         return users.find(user => user[crit] === value);
     }
+
 
     // Peut etre devrait on verifier si l'utilisateur 
     // existe pour retourner une reponse plus precise
@@ -89,7 +106,6 @@ module.exports = (db) => {
 
         return userFriendsId.map(friendId => getUserById(friendId));
     }
-
 
 
     const _getUnreadMessages = (fromDiscContent, userId) => {
@@ -136,10 +152,7 @@ module.exports = (db) => {
             }
         });
 
-        return activeDiscs.sort((a, b) => {
-            console.log(b.lastUpdate, a.lastUpdate,  b.lastUpdate > a.lastUpdate)
-            return b.lastUpdate > a.lastUpdate
-        });
+        return activeDiscs.sort((a, b) => b.lastUpdate > a.lastUpdate);
 
     }
 
@@ -168,6 +181,7 @@ module.exports = (db) => {
         })
     }
 
+    
     const recomposeMessage = (msg, data) => {
         return {
             id: msg.id,
@@ -181,6 +195,8 @@ module.exports = (db) => {
 
     return {
         getUserById,
+        getUserByMail,
+        getUsers,
         getUserIndex,
         getUserFriends,
         getUserActiveDiscussions,
