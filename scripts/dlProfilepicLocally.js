@@ -6,7 +6,7 @@ const db = require("../db");
 const data  = db.get();
 const { users } = data; 
 
-const dest = "D:/CODE/serverSkipy/upload/ppicture";
+const dest = require("../config/secret").ppictureDir;
 
 // to target only facebook ppicture
 // s:\/\/platform-lookaside.fbsbx.com

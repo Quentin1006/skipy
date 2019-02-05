@@ -13,12 +13,12 @@ yarn-debug.log*
 yarn-error.log*
 
 
-# config
-config
+#cert
+cert
+
+# sensitive informations
+secret.js
+
 
 # upload
 upload
-
-# test
-test
-tests
