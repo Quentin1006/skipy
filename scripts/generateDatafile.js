@@ -2,7 +2,7 @@ const URL = require('url').URL;
 const fs = require("fs");
 const fetch = require("cross-fetch");
 
-const secret = require("../../config/secret")
+const secret = require("../config/secret")
 const { gontran, quentin } = secret
 const ADMIN_ROLE = 100;
 const USER_ROLE = 10;
