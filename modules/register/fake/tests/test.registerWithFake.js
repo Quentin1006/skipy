@@ -63,14 +63,21 @@ const testRegisterWithFake = async () => {
 
 
 
-(async() => { 
-    try{
-        populateFakeStore(fakeStore, 500);
-        await testRegisterWithFake(); 
-        process.exit(0);
-    }
-    catch(e){
-        console.log(e);
-    }
+
+describe("Testing registering with Fake provider", () => {
+    test("User should exists and provider should be fake", async() => {
+        use("getUserById", getUserById);
+        use("getSessions", getSessions);
+
+        try {
+            populateFakeStore(fakeStore, 500);
+            const res = await registerWithFake();
+            expect(res.user).toHaveProperty("provider", "fake")
+            expect(res).toHaveProperty("isFake", true);
+        }
+        catch(e) {
+            console.log(e);
+        }
+    })
+})
    
-})()

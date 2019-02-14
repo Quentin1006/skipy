@@ -18,12 +18,15 @@ const get_urls = [
 const port_urls = [];
 
 
-get_urls.forEach(url => {
-    testRouteStatus({
-        url,
-        headers: {
-            adminKey
-        }
+test.skip("skiping", () => {
+    get_urls.forEach(url => {
+        testRouteStatus({
+            url,
+            headers: {
+                adminKey
+            }
+        })
+        
     })
-    
+
 })

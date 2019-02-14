@@ -1,12 +1,12 @@
 process.env.NODE_ENV = "development";
 
-const { generate } = require("randomstring");
-const assert = require("assert");
+const uniqid  = require("uniqid");
 const qs = require("querystring")
 const getFBTokenWithPPTR = require("../../lib/OAuth/facebook/getFBTokenWithPPTR");
 
+
 const Session = function(){
-    this.id = generate(8);
+    this.id = uniqid();
 };
 
 
@@ -18,11 +18,14 @@ const Request = function(useGlobalSession=true) {
 };
 
 
-const Response = function(){};
-Response.prototype.send = (json) => {
-    this.json = json; 
-    console.log(json);
-}
+const Response = function(){
+    let json = undefined;
+    return {
+        get : () => json,
+        send : (val) => {json = val}
+    }
+};
+
 
 const {
     authenticateRequest,
@@ -59,63 +62,49 @@ const body = (token) => {
 const getAccessToken = async (email, pwd, client_id, redirect_uri) => {
     const uri = "https://www.facebook.com/v3.1/dialog/oauth";
     const params = qs.stringify({client_id, redirect_uri, response_type:"token"});
-    console.log(`${uri}?${params}`);
+    //console.log(`${uri}?${params}`);
     return (await getFBTokenWithPPTR(`${uri}?${params}`, email, pwd, redirect_uri))
 }
 
 
-const testAuthenticateRequest = async(user_mail, user_pwd, client_id, redirect_uri) => {    
-    const token = await getAccessToken(user_mail, user_pwd, client_id, redirect_uri);
+describe("Testing valid authentication process", () => { 
+    let token = "";
+    const req = new Request(), res = new Response();
 
-    return async (req, res) => {
+    beforeAll(async () => {
+        token = await getAccessToken(
+            user_mail, 
+            user_pwd, 
+            client_id, 
+            redirect_uri
+        );
+    });
+
+
+    test("Token should be fetched", () => {
+        expect(token).not.toBe("");
+    });
+
+
+    test("No session should be found", () => {
+        checkIfUserSession(req, res);
+        expect(res.get()).toHaveProperty("isLoggedIn", false);
+    })
+    
+
+    test("User should be able to authenticate with correct infos", async () => {
         req.body = body(token);
         await authenticateRequest(req, res);
-        assert(globalSession.user !== undefined, "globalSession should contain a user");
-    }
-    
-}
+        expect(req.session.user).not.toBeUndefined();
+        expect(req.session.user).toHaveProperty("email", user_mail);
+    })
 
 
-/**
- * For functional tests
- */
-const testCheckIfUserSession = () => {
-    return (req, res) => {
-        checkIfUserSession(req, res);
-    }
-}
-
-
-const testLogout = () => {
-    return (req, res) => {
+    test("No user should be present after logout", () => {
         const isUser = !!req.session.user
         logout(req, res);
-        assert(isUser && !req.session.user, "No user should be present after logout");
-    };
+        expect(isUser && !req.session.user).toBe(true);
+    });
     
-}
-
-
-const testAuthenticateProcess = async (reuseSession=true) => {
-    const req = new Request(reuseSession)
-    const res = new Response();
-
-    testCheckIfUserSession()(req, res);
-    await (await testAuthenticateRequest(user_mail, user_pwd, client_id, redirect_uri))(req, res);
-    testCheckIfUserSession()(req, res);
-    testLogout(false)(req, res);
-    testCheckIfUserSession()(req, res);
-
-}
-
-
-(async() => { 
-    try{
-        await testAuthenticateProcess();
-    }
-    catch(e){
-        console.log(e);
-    }
-    process.exit(0);
-})()
+})
 

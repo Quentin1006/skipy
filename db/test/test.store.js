@@ -9,42 +9,50 @@ const userTesting = require("./test.users");
 
 const discTesting = require("./test.discussions");
 
+const testDbBranch = (description, fn, ...args) => {
+    describe(description, () => {
+        const copy = `${pathToDb}.copy`;
+
+        beforeAll(() => {
+            console.log("calling beforeEach");
+            return new Promise((resolve, reject) => {
+                fs.copyFile(pathToDb, copy, (err) => {
+                    if(err) reject(err);
+                    resolve();
+                })
+            })
+        })
+    
+        afterAll(() => {
+            return new Promise((resolve, reject) => {
+                fs.unlink(pathToDb, err => {
+                    if(err) reject(err);
+                    fs.rename(copy, pathToDb, (err) => {
+                        if(err) return reject(err);
+                        resolve();
+                    });
+                });
+            })
+        })
+    
+        test("path to db should be correct", () => {
+            expect(pathToDb).toStrictEqual("D:\\CODE\\serverSkipy\\db\\test\\data.json")
+        })
+    
+        test("copy of db should be created", () => {
+            const copyToDBCreated = fs.existsSync(copy);
+            expect(copyToDBCreated).toBeTruthy();
+        })
+    
+        fn(...args);
+    })
+} 
 
 // Laisse la base de données intacte à la fin du test 
 // quelque soit l'interaction
-const runDbTest = (pathToDb, testsFct, ...args) => {
-    return new Promise((resolve, reject) => {
-        const copy = `${pathToDb}.copy`;
-        fs.copyFile(pathToDb, copy, (err) => {
-            if(err) console.log(err);
-            else {
-                try {
-                    testsFct(...args);
-                }
-                catch(e){console.log(e)}
-                
-            }
-            fs.unlink(pathToDb, err => {
-                if(err) reject(err);
-                fs.rename(copy, pathToDb, (err) => {
-                    if(err) return reject(err);
-                    resolve();
-                });
-            });
-            
-        })
-    })
-    
-}
-
-
-runDbTest(pathToDb, userTesting, pathToDb)
-.then(() => (
-    runDbTest(pathToDb, discTesting, pathToDb)
-))
-// .then(() => (
-//     runDbTest(pathToDb, notificationTesting, pathToDb) // Need to redo the tests
-// ))
-.then(() => {
-    process.exit(0);
+describe("Testing the DB", () => {
+    testDbBranch("Test Notification branch", notificationTesting, pathToDb); 
+    testDbBranch("Test user branch", userTesting, pathToDb);
+    testDbBranch("Test discussion branch", discTesting, pathToDb);
 })
+

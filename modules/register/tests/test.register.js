@@ -14,6 +14,10 @@ const authInfosWithCode = {
     provider: "facebook"
 }
 
-register(authInfosWithToken)
-    .then(res => console.log("register", res))
-    .catch(err => console.log("register err", err));
+
+test.todo("Test register function")
+
+
+// register(authInfosWithToken)
+// .then(res => console.log("register", res))
+// .catch(err => console.log("register err", err));

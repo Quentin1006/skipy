@@ -21,93 +21,93 @@ const testing = (pathToDb) => {
     // no notif for this user
     const idUser2 = gontran.id;
 
-    const discWith3UnreadMessagesId = 5;
+    describe("Testing method db.getUsers", () => {
+        test("search with provider fake, and firstname contains 'tin' all match criterion", () => {
+            const matchingUsers = db.getUsers({provider:"fake", firstname:"tin"});
+            const allMatchCriterion = matchingUsers.every(el => (
+                el.provider === "fake" 
+                && el.firstname.includes("tin"))
+            )
+            expect(allMatchCriterion).toBeTruthy();
+        });
 
-    debug("\n\n---- GETTING USERS BY FILTER ----\n\n");
-    debug("Should return a list of users with")
-    debug(
-        " => provider fake, and firstname contains tin", 
-        db.getUsers({provider:"fake", firstname:"tin"})
-            .every(el => (el.provider === "fake" && el.firstname.includes("tin")))
-    );
-    debug(
-        " => provider fake, and firstname contains ont", 
-        db.getUsers({provider:"fake", firstname:"ont"}).length === 0
-    );
+        test("search with provider fake, and firstname contains 'ont' should have no match", () => {
+            const matchingUsers = db.getUsers({provider:"fake", firstname:"ont"});
+            expect(matchingUsers).toHaveLength(0);
+        })
 
-    debug("Should search thru nested object",
-        (db.getUsers({provider:"fake", firstname:"mal", "registered.age": 5})[0]).firstname === "malou"
-    )
+        test("Should search thru nested object", () => {
+            const userMalou = (db.getUsers({provider:"fake", firstname:"mal", "registered.age": 5})[0]);
+            expect(userMalou).toHaveProperty("firstname", "malou");
+        })
 
-    debug("Should return object user Quentin Sahal by searching with shortcut getUserByMail",
-        db.getUserByMail(quentin.email).email === quentin.email
-    )
+        test("Should return object user Quentin Sahal by searching with shortcut getUserByMail", () => {
+            expect(db.getUserByMail(quentin.email)).toHaveProperty("email", quentin.email);
+        });
 
-    debug("Should return object user with id 232 by searching with shortcut getUserById",
-        db.getUserById(232).id === "232"
-    )
-
-     
-    // const activeDiscussions = db.getUserActiveDiscussions(idUser2);
-    // const discWithId5 = activeDiscussions.filter(disc => disc.id === discWith3UnreadMessagesId)[0];
-    // const unreadFromDisc = discWithId5.unreadMessagesCount;
-    // debug("Should return 1 unread messages (from the user):", unreadFromDisc);
-
-    debug("\n\n---- GETTING FRIENDS OF A USER ----\n\n")
-    debug("Should return a number of  259 friends", db.getUserFriends(idUser2).length === 259);
-    debug("Should return a list of friends of 1 friend", db.getUserFriends(0).length === 1);
-    debug("-----------------------------------")
+        test("Should return object user with id 232 by searching with shortcut getUserById", () => {
+            expect(db.getUserById(232)).toHaveProperty("id", "232");
+        })
+    });
 
 
-    debug("\n\n---- UPDATING USER (CASE CORRECT) ----\n\n");
+    describe("Getting friends for a user", () => {
+        test.each([["gontran", gontran.id, 259], ["user0", "0", 1]])(
+            "user %s should have the right number of friends",
+            (name, id, nbFriends) => {
+                const friendlist = db.getUserFriends(id);
+                expect(friendlist).toHaveLength(nbFriends)
+            }
+        )
+    })
 
-    const user2 = db.getUserById(idUser2)
-    debug("User should have a matching id", user2.id === idUser2);
-    debug("User nat should be FR", user2.nat === "FR");
-    debug("User firstname should be gontran", user2.firstname.toLowerCase() === "gontran");
+    describe("Updating user", () => {
+        test("Should have right properties before updating", () => {
+            const userGontran = db.getUserById(gontran.id);
+            expect(userGontran).toHaveProperty("id", gontran.id);
+            expect(userGontran).toHaveProperty("nat", "FR");
+            expect(userGontran.firstname).toMatch(/gontran/i);
+        })
 
-    debug("\n\n---- AFTER UPDATE - UPDATED USER ----\n\n");
+        test("Should update user nat and firstname and return updated user", () => {
+            const updatedUser = db.updateUser(gontran.id, {nat: "GB", firstname: "Luc"});
+            expect(updatedUser).toHaveProperty("nat", "GB");
+            expect(updatedUser.firstname).toMatch(/luc/i);
 
-    const updatedUser = db.updateUser(idUser2, {nat: "GB", firstname: "Luc"});
-    debug("User nat should be GB", updatedUser.nat === "GB");
-    debug("User firstname should be Luc", updatedUser.firstname.toLowerCase() === "luc");
-    
-    debug("")
-    debug("")
-    
-    debug("\n\n---- AFTER UPDATE - GET USER ----\n\n");
-
-    const updatedUserById = db.getUserById(idUser2)
-    debug("User should have a matching id", updatedUserById.id === idUser2);
-    debug("User nat should be GB", updatedUserById.nat === "GB");
-    debug("User firstname should be Luc", updatedUserById.firstname.toLowerCase() === "luc");
-
-    debug("")
-    debug("")
-    debug("\n\n---- UPDATING USER (CASE INCORRECT) ----\n\n");
+        })
 
 
-    const user2Incorrect = db.getUserById(idUser2)
-    debug("User should have a matching id", user2Incorrect.id === idUser2);
-    debug("User nat should be GB", user2Incorrect.nat === "GB");
-    debug("User firstname should be luc", user2Incorrect.firstname.toLowerCase() === "luc");
+        test("Retrieving the user from the db should return updated user", () => {
+            const updatedUserInDb = db.getUserById(gontran.id);
+            expect(updatedUserInDb).toHaveProperty("id", gontran.id);
+            expect(updatedUserInDb).toHaveProperty("nat", "GB");
+            expect(updatedUserInDb.firstname).toMatch(/luc/i);
+        })
 
 
-    debug("\n\n---- AFTER UPDATE - UPDATED USER ----\n\n");
-    try {
-        debug("Should not work when updating with incorrect model")
-        const updatedUserIncorrect = db.updateUser(idUser2, {firstname: 3, inexistantField: "Luc"});
-    }
-    catch(e){
-        debug("Should return a ValidationError", e.name === "ValidationError")
-    }
-    
-    debug("\n\n---- AFTER UPDATE - GET USER ----\n\n");
+        test("Bad Update should return an a ValidationError", () => {
+            try {
+                db.updateUser(
+                    idUser2, 
+                    {firstname: 3, inexistantField: "Luc"}
+                );
+            }
+            catch({name}){
+                expect(name).toBe("ValidationError");
+            }
+        });
 
-    const updatedUserByIdIncorrect = db.getUserById(idUser2)
-    debug("User should have a matching id", updatedUserByIdIncorrect.id === idUser2);
-    debug("User nat should be GB", updatedUserByIdIncorrect.nat === "GB");
-    debug("User firstname should be Luc", updatedUserByIdIncorrect.firstname.toLowerCase() === "luc");
+        test("User remains unchanged after bad update", () => {
+            const userAfterBadUpdate = db.getUserById(gontran.id);
+            expect(userAfterBadUpdate).toHaveProperty("id", gontran.id);
+            expect(userAfterBadUpdate).toHaveProperty("nat", "GB");
+            expect(userAfterBadUpdate.firstname).toMatch(/luc/i);
+        })
+        
+
+
+
+    })
 };
 
 

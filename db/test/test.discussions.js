@@ -12,26 +12,54 @@ const testing = (pathToDb) => {
     ])
 
 
-    // notif for this user 
-    const idUser1 = 0
-    // no notif for this user
-    const idUser2 = require("../../config/secret").gontran.id;
+    const gontranId = require("../../config/secret").gontran.id;
 
-    debug("Test entering firstname, Should return array of 2 el with ids 1, 108", db.getMatchingSuggestions(idUser2, "Andrea", 3));
-    debug("Test entering lastname, Should return array of 3 el with ids 46, 108, 341", db.getMatchingSuggestions(idUser2, "Nielsen", 3));
-    debug("Test entering fullname, Should return array of 1 el with id 108", db.getMatchingSuggestions(idUser2, "Andrea Niel", 3));
-
-
-    debug("Test with less suggestions that desired, Should return 5 users", db.getMatchingSuggestions(idUser2, "Ca", 10));
-    debug("Test with more suggestions that desired, Should return 2 users", db.getMatchingSuggestions(idUser2, "Ca", 2));
+    describe("Testing the autocomplete for the recipient search", () => {
+        test("Should work when entering the firstname", () => {
+            const sugg = db.getMatchingSuggestions(gontranId, "Andrea", 3);
+            expect(sugg).toHaveLength(2);
+            expect(sugg[0]).toHaveProperty("id", "1");
+            expect(sugg[1]).toHaveProperty("id", "108")
+        })
 
 
-    debug("Test with no suggestion", db.getMatchingSuggestions(idUser2, "Xk", 2));
+        test("Should work when entering the lastname", () => {
+            const sugg = db.getMatchingSuggestions(gontranId, "Nielsen", 3);
+            expect(sugg).toHaveLength(3);
+            expect(sugg[0]).toHaveProperty("id", "46");
+            expect(sugg[1]).toHaveProperty("id", "108");
+            expect(sugg[2]).toHaveProperty("id", "341")
+        })
 
-    debug("Test with empty search", db.getMatchingSuggestions(idUser2, "", 2));
+        test("Should work when entering fullname", () => {
+            const sugg = db.getMatchingSuggestions(gontranId, "Andrea Niel", 3);
+            expect(sugg).toHaveLength(1);
+            expect(sugg[0]).toHaveProperty("id", "108");
+        })
 
-    
+        test("Should work when no suggestions available", () => {
+            const emptySugg = db.getMatchingSuggestions(gontranId, "Xk", 2);
+            expect(emptySugg).toHaveLength(0);
+        })
 
+        describe("Should return a number of suggestions in accordance with the max desired", () => {
+            test("When less result than max allowed", () => {
+                const bigMaxAlllowed = 10;
+                expect(db.getMatchingSuggestions(gontranId, "Ca", bigMaxAlllowed).length).toBeLessThanOrEqual(bigMaxAlllowed);
+                
+            })
+
+            test("When more result than max allowed", () => {
+                const lowMaxAllowed = 2;
+                expect(db.getMatchingSuggestions(gontranId, "Ca", 2).length).toBeLessThanOrEqual(lowMaxAllowed);
+            })
+        })
+
+        test("Should work when empty search", () => {
+            const emptySearch = db.getMatchingSuggestions(gontranId, "", 2);
+            expect(emptySearch).toHaveLength(0);
+        })
+    })
 };
 
 

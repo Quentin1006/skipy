@@ -61,16 +61,18 @@ const toTest = {
 };
 
 
-Object.entries(toTest).map(([key, objToTest]) => {
-    debug("Test for ",key);
-    try{
-        const u = new User(objToTest);
-        for (let ku of Object.keys(u)) {
-            debug(u[ku]);
-        }
-    }
-    catch(e){
-        debug(e);
-    }
+
+test.todo("Testing different working or not models")
+// Object.entries(toTest).map(([key, objToTest]) => {
+//     debug("Test for ",key);
+//     try{
+//         const u = new User(objToTest);
+//         for (let ku of Object.keys(u)) {
+//             debug(u[ku]);
+//         }
+//     }
+//     catch(e){
+//         debug(e);
+//     }
     
-})
+// })
