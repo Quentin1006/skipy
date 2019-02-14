@@ -1,10 +1,10 @@
 // Insérer ici les stratégies d'authentification des providers désirés
 // les ajouter ensuite dans dans la boucle switch 
 const config = require("../../config")
-const creds = config.oauth;
-const FBcreds = creds.facebook;
+const appCreds = config.oauth;
+const FBappCreds = appCreds.facebook;
 const { getSessions, maxAvailableSessions } = config;
-const { registerWithFB, use: fbUse } = require("./facebook/FBregister")(FBcreds);
+const { registerWithFB, use: fbUse } = require("./facebook/FBregister")(FBappCreds);
 const { registerWithFake, use: fkUse } = require("./fake/registerWithFake")(maxAvailableSessions);
 
 const db = require("../../db");

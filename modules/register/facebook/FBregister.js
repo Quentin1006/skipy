@@ -37,18 +37,17 @@ module.exports = (FBoauthCreds) => {
             .then(user => {
                 const { email } = user;
                 const existingUser = this.checkIfUserExists(email, "email");
-    
                 if(!existingUser) {
-                    const userToAdd = User.validate({
+                    const userToAdd = User.validateUser({
                         id: `fb${user.id}`,
                         firstname: user.first_name,
                         username: user.first_name,
-                        email: user.email,
+                        email,
                         lastname: user.last_name,
                         provider: auth_infos.provider,
                         profilepic: user.picture.data.url,
                         registered: {
-                            date: Date.now(),
+                            date: (new Date()).toISOString(),
                             age: 0
                         },
                         role: 10
@@ -69,6 +68,7 @@ module.exports = (FBoauthCreds) => {
                 }
             })
             .catch((err) => { 
+                console.log("here", err)
                 return {
                     ...err,
                     error: "FB OAuth error"
