@@ -15,6 +15,7 @@ const redisCreds = {
 
 }
 
-exports.redisConfig = redisCreds[env];
-exports.redisAdapter = ioredis(this.redisConfig);
+const redisConfig = redisCreds[env];
+exports.redisAdapter = ioredis(redisConfig);
+exports.redisConfig;
 

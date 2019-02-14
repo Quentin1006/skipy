@@ -1,7 +1,7 @@
 const {resolve} = require("path");
 const auth = require("./secret").mailer
 
-console.log(resolve(__dirname, "../mailTemplates"));
+//console.log(resolve(__dirname, "../mailTemplates"));
 
 module.exports = {
     transporterOpts : {
