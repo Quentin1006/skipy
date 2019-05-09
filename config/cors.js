@@ -1,9 +1,9 @@
 const secret = require("./secret");
-const corsWhitelist = secret.corsWhitelist.split(" ").join(',');
+const corsWhitelist = secret.corsWhitelist.split(" ");
 
 module.exports = {
     origin: function(origin, cb){
-        if (corsWhitelist.indexOf(origin) !== -1) {
+        if (corsWhitelist.indexOf(origin) !== -1 ) {
             cb(null, true)
         } 
         else {

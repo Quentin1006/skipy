@@ -39,6 +39,9 @@ module.exports = {
     sessionSecret: env.SESSION_SECRET,
     ppictureDir: path.resolve(__dirname, "../upload/ppicture"),
     pathToData: path.resolve(__dirname, "../db/data.json"),
-    corsWhitelist: env.CORS_WHITELIST
+    corsWhitelist: env.CORS_WHITELIST,
+
+    httpsCertKey: env.CERT_SERVER_KEY,
+    httpsCert: env.CERT_SERVER
 
 }
