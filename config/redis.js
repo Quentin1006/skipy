@@ -1,21 +1,21 @@
 const ioredis = require('socket.io-redis');
-const node_env = process.env.NODE_ENV
-const env =  node_env ? node_env.toLowerCase() : "development";
+const env = process.env
+const node_env =  env.NODE_ENV ? env.NODE_ENV.toLowerCase() : "development";
 
 
 const redisCreds = {
     development: {
-        host: "localhost",
-        port: "6379"
+        host: env.REDIS_DOMAIN,
+        port: env.REDIS_PORT
     },
     production: {
-        host: "localhost",
-        port: "6379"
+        host: env.REDIS_DOMAIN,
+        port: env.REDIS_PORT
     },
 
 }
 
-const redisConfig = redisCreds[env];
+const redisConfig = redisCreds[node_env];
 exports.redisAdapter = ioredis(redisConfig);
 exports.redisConfig;
 

@@ -1,6 +1,11 @@
-const
-    io = require("socket.io-client"),
-    ioClient = io.connect("https://localhost:3001/messages", {rejectUnauthorized: false, secure:true});
+const io = require("socket.io-client");
+const { PROTOCOL, DOMAIN, PORT } = process.env;
+const ioClient = io.connect(
+    `${PROTOCOL}://${DOMAIN}:${PORT}/messages`, 
+    {rejectUnauthorized: false, secure:true}
+);
+
+
 
 
 ioClient.on("conn", (id) =>{

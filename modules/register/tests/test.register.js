@@ -1,4 +1,5 @@
 const { register } = require("../");
+const { PROTOCOL, DOMAIN, PORT } = process.env;
 
 
 const authInfosWithToken = {
@@ -10,7 +11,7 @@ const authInfosWithToken = {
 const authInfosWithCode = {
     code: new Error("Enter a valid access code"),
     auth_type: "code",
-    redirect_uri: "http://localhost:3001/login",
+    redirect_uri: `${PROTOCOL}://${DOMAIN}:${PORT}/login`,
     provider: "facebook"
 }
 

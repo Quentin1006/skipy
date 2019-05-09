@@ -7,12 +7,14 @@ const { user_mail, user_pwd } = require("../../../../config/secret").creds.faceb
 const { registerWithFB, use } = require("../FBregister")(FBappCreds);
 const getFBTokenWithPPTR = require("../../../../lib/OAuth/facebook/getFBTokenWithPPTR");
 
+const { PROTOCOL, DOMAIN, PORT } = process.env;
+
 
 
 const authInfosWithCode = {
     code: new Error("Enter a valid access code"),
     auth_type: "code",
-    redirect_uri: "http://localhost:3001/login",
+    redirect_uri: `${PROTOCOL}://${DOMAIN}:${PORT}/login`,
     provider: "facebook"
 }
 

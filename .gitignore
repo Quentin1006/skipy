@@ -1,5 +1,6 @@
 .vscode/*
 *.json
+.env
 
 # npm packages
 node_modules
@@ -15,9 +16,6 @@ yarn-error.log*
 
 #cert
 cert
-
-# sensitive informations
-secret.js
 
 
 # upload

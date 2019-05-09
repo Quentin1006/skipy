@@ -14,6 +14,7 @@
     "cors": "^2.8.4",
     "cross-fetch": "^2.2.2",
     "debug": "~2.6.9",
+    "dotenv": "^8.0.0",
     "express": "~4.16.0",
     "express-fileupload": "^1.1.1-alpha.1",
     "express-handlebars": "^3.0.0",
@@ -29,6 +30,7 @@
     "preview-email": "0.0.8",
     "randomstring": "^1.1.5",
     "redis": "^2.8.0",
+    "session-file-store": "^1.2.0",
     "socket.io": "^2.1.1",
     "socket.io-redis": "^5.2.0",
     "uniqid": "^5.0.3"
@@ -38,12 +40,17 @@
     "loadtest": "^3.0.4",
     "optimist": "^0.6.1",
     "puppeteer": "^1.9.0",
-    "session-file-store": "^1.2.0",
     "socket.io-client": "^2.1.1"
   },
   "jest": {
-    "testMatch": ["**/tests?/**/*.[jt]s?(x)", "**/test.*.js"],
+    "testMatch": [
+      "**/tests?/**/*.[jt]s?(x)",
+      "**/test.*.js"
+    ],
     "verbose": true,
-    "modulePathIgnorePatterns": ["<rootDir>/lib/"]
+    "modulePathIgnorePatterns": [
+      "<rootDir>/lib/"
+    ],
+    "setupFiles": ["dotenv/config"]
   }
 }

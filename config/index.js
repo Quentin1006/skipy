@@ -8,8 +8,8 @@ const socketioOpts = require("./socketio");
 
 const { adminKey, pathToData } = require("./secret");
 
-const hostname = "localhost:3001";
-const protocol = "https";
+const hostname = `${process.env.DOMAIN}:${process.env.PORT}`;
+const protocol = process.env.PROTOCOL;
 const maxAvailableSessions = 490;
 
 
