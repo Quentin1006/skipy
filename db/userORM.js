@@ -4,6 +4,7 @@ const User = require("../models/User");
 
 module.exports = (db) => {
 
+    // Get all the users matching all the selected filters
     const getUsers = (filters={}, compare=comparator) => {
         const data = db.get();
         const {users} = data;
@@ -19,8 +20,41 @@ module.exports = (db) => {
                 return compare(usrCrit, filtersCrit);
             })
         })
+        return filteredUsers.map(usr => new User(usr));
+    }
+
+
+    // returns all the user whose name, lastname or both matches partially the text 
+    const getUsersByName = (text, opts) => {
+        opts = {
+            max:10,
+            minLength:2,
+            ...opts
+        }
+
+        if(text.length < opts.minLength){
+            return [];
+        }
+            
+        const data = db.get();
+        const {users} = data;
+
+        text= text.toLowerCase();
+        const filteredUsers = []
+        
+        for(let usr of users){
+            const fullname = `${usr.firstname} ${usr.lastname}`.toLowerCase();
+            if(fullname.indexOf(text) > -1){
+                filteredUsers.push(usr)
+            }
+
+            if(filteredUsers.length >= opts.max){
+                break;
+            }
+        }
         return filteredUsers.map(usr => new User(usr))
     }
+
 
     const getUserById = (id) => {
         return getUsers({id})[0];
@@ -197,6 +231,7 @@ module.exports = (db) => {
         getUserById,
         getUserByMail,
         getUsers,
+        getUsersByName,
         getUserIndex,
         getUserFriends,
         getUserActiveDiscussions,

@@ -1,7 +1,3 @@
-const { isEmpty, has } = require("lodash");
-const debug= require("debug")("test:users");
-
-
 const Store = require("../store");
 const userORM = require("../userORM");
 const discussionORM = require("../discussionORM");
@@ -34,12 +30,12 @@ const testing = (pathToDb) => {
         test("search with provider fake, and firstname contains 'ont' should have no match", () => {
             const matchingUsers = db.getUsers({provider:"fake", firstname:"ont"});
             expect(matchingUsers).toHaveLength(0);
-        })
+        });
 
         test("Should search thru nested object", () => {
             const userMalou = (db.getUsers({provider:"fake", firstname:"mal", "registered.age": 5})[0]);
             expect(userMalou).toHaveProperty("firstname", "malou");
-        })
+        });
 
         test("Should return object user Quentin Sahal by searching with shortcut getUserByMail", () => {
             expect(db.getUserByMail(quentin.email)).toHaveProperty("email", quentin.email);
@@ -47,7 +43,24 @@ const testing = (pathToDb) => {
 
         test("Should return object user with id 232 by searching with shortcut getUserById", () => {
             expect(db.getUserById(232)).toHaveProperty("id", "232");
+        });
+    });
+
+    describe("Testing method getUsersByName", () => {
+        const text = 'sah';
+        test(`search should return only user with ${text} in their firstname or lastname`, () => {
+            expect(db.getUsersByName(text)).toHaveLength(1);
         })
+
+        test(`search with text too short should return empty array`, () => {
+            expect(db.getUsersByName(text, {minLength:4})).toHaveLength(0);
+        });
+
+
+        test(`search should return nb of result <= to the max requested`, () => {
+            expect(db.getUsersByName("s", {max: 5, minLength:1})).toHaveLength(5);
+        });
+
     });
 
 
