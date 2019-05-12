@@ -1,4 +1,3 @@
-const debug= require("debug")("test:store");
 const path = require("path");
 const fs = require("fs");
 const pathToDb = path.resolve(__dirname, "data.json");
