@@ -40,7 +40,14 @@ module.exports = (io) => {
 
         socket.on("global search", (text) => {
             const matches = db.getUsersByName(text);
-            socket.emit("global search response", matches);
+            const fshipStatus = matches.reduce((acc, person) => {
+                const status = db.getFriendshipStatus(userId, person.id);
+                return {
+                    ...acc,
+                    [person.id]: status
+                }
+            }, {});
+            socket.emit("global search response", matches, fshipStatus);
         })
 
 
