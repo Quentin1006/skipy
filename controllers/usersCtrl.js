@@ -173,7 +173,25 @@ const sendUserDiscussions = (req, res, next) => {
   	}
 }
 
+
+
+const checkFriendship = (req, res, next) => {
+	try {
+		const id = getUserId(req);
+		const personId = req.params.personId // id of the other we wanna check the fship with
+		
+		const isFriendship = db.checkFriendship(id, personId);
+
+		res.send(isFriendship);
+	}
+	catch(e){
+    	console.log(e);
+    	next(e);
+  	}
+}
+
 module.exports = {
+	checkFriendship,
     sendUserDiscussions,
 	sendUser,
 	updateUser,
