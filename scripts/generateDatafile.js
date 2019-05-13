@@ -165,7 +165,7 @@ const genData = () => {
                 1: "google",
                 10: "other"
             },
-            fsStatus: ["pending", "confirmed", "declined"],
+            fsStatus: ["inexistant", "confirmed", "pending", "declined"],
             roles: {
                 10: "user",
                 100: "admin"
