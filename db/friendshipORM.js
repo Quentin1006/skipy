@@ -32,125 +32,77 @@ module.exports = (db) => {
         return friendships[`${u1}#${u2}`] || friendships[`${u2}#${u1}`]
     }
 
-
+    // return an array to include initBy when needed
     getFriendshipStatus = (u1, u2) => {
         if(u1 === u2){
-            return Friendship.YOU;
+            return  {status: Friendship.YOU };
         }
 
         const fship = checkFriendship(u1,u2);
+
         if(fship){
-            return fsStatus[fship.status];
+            // to know who can answer the pending request
+            return {
+                status: fsStatus[fship.status], 
+                initBy: fship.initBy
+            }
         }
 
         // just to return INEXISTANT
-        return fsStatus[fsStatus.INEXISTANT];
+        return {
+            status: fsStatus[fsStatus.INEXISTANT]
+        };
     }
-
-
-
 
 
     const sendFriendRequest = (senderId, receiverId) => {
         const friendships = _getFriendships();
         const fship = _findFriendship(senderId, receiverId);
-        const fshipExists = !!fship
+        const fshipExists = !!fship;
+        const fsId = `${senderId}#${receiverId}`;
         
-        
-        if(fshipExists && fship.status !== fsStatus.INEXISTANT){
+        if(
+            (fshipExists && fship.status !== fsStatus.INEXISTANT) 
+            || senderId === receiverId 
+          ){
             return {err: "ERR_NOT_ALLOWED"}
         }
         
-        friendships[`${senderId}#${receiverId}`] = new Friendship({
+        friendships[fsId] = new Friendship({
             senderId,
             receiverId,
             status: fsStatus.PENDING
         })
 
         _updateFriendship(friendships);
-        return {success: true}
+
+        const res = friendships[fsId]
+
+        return {res}
     }
 
-
-    const _handleFriendRequest = ({
-        senderId, 
-        receiverId, 
-        isAcceptable, 
-        nextStatus,
-    }) => {
-        const { friendships } = _getFriendships();
-        const fsId = `${senderId}#${receiverId}`;
-        const friendship = friendships[fsId]
-        const status = friendship && fsStatus( friendship.status );
-
-        
-        if(status && !isAcceptable(status)){
-            return {err: "ERR_NOT_ALLOWED"}
-        }
-
-        let found = false;
-        const newFriendships = Object.keys(friendships).map(id => {
-            if(id !== fsId){
-                return friendships[id]; 
-            }
-
-            found = true;
-            return new Friendship({
-                senderId,
-                receiverId,
-                status: nextStatus
-            })
-        })
-
-        if(!found){
-            newFriendships[fsId] = new Friendship({
-                senderId,
-                receiverId,
-                status: nextStatus
-            })
-        }
-        
-        _updateFriendship(newFriendships);
-        return {success: true}
-
-    }
-
-
+    // Important to not mix senderId and receiverId to prevent 
+    // sender from accepting the request he sent 
     const answerFriendRequest = (senderId, receiverId, accepted) => {
-        // const isAcceptable = status => status === fsStatus.INEXISTANT;
-        // const nextStatus = accepted ? fsStatus.CONFIRMED : fsStatus.DECLINED
-
-        // _handleFriendRequest({
-        //     senderId,
-        //     receiverId,
-        //     isAcceptable,
-        //     nextStatus,
-        // })
-                
         const friendships = _getFriendships();
         const fsId = `${senderId}#${receiverId}`;
         const fship = friendships[fsId];
         const status = fship && fship.status;
         
-        if(!status || status !== fsStatus.PENDING){
+        if(!status || status !== fsStatus.PENDING || fship.initBy !== senderId){
             return {err: "ERR_NOT_ALLOWED"}
         }
 
-        friendships[fsId].status = accepted ? fsStatus.CONFIRMED : fsStatus.DECLINED
+        friendships[fsId].status = accepted ? fsStatus.CONFIRMED : fsStatus.DECLINED        
+        _updateFriendship(friendships);
 
-        // const newFriendships = Object.keys(friendships).map(id => {
-        //     if(id !== fsId){
-        //         return friendships[id]; 
-        //     }
+        const res = {
+            friendship: friendships[fsId],
+            accepted,
+            receiverId
+        }
 
-        //     return new Friendship({
-        //         senderId,
-        //         receiverId,
-        //         status: accepted ? fsStatus.CONFIRMED : fsStatus.DECLINED
-        //     })
-        // })
-        
-        _updateFriendship(friendships)
+        return {res}
     }
 
 
@@ -173,12 +125,16 @@ module.exports = (db) => {
             return {err: "NO_FRIENDSHIP_TO_DELETE"}
         }
 
+        if(fsObj && fsObj.status === fsStatus.DECLINED ){
+            return {err: "FRIENDSHIP_DELETE_NOT_ALLOWED"}
+        }
+
         delete friendships[`${userDeleting}#${userDeleted}`];
         delete friendships[`${userDeleted}#${userDeleting}`];
 
         _updateFriendship(friendships);
 
-        return {success: true}
+        return {res: true}
     }
 
 
