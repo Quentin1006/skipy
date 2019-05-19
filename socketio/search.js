@@ -5,13 +5,6 @@ const debug = require("debug")("socketio:search");
 
 const db = require("../db");
 
-//const socketIdToUserId = (socketId) => (Number((socketId.split("#"))[1]));
-
-const getDiscByDiscIdOrUsersId = (discOrFriendId, by) => {
-    return  (by === "users")
-            ? db.discussionExists(userId, discOrFriendId)
-            : db.getDiscussion(discOrFriendId);
-}
 
 module.exports = (io) => {
     io.use(sharedsession(session(sessionOpts, { autoSave:true})));
@@ -42,6 +35,11 @@ module.exports = (io) => {
             const matches = db.getUsersByName(text);
             const fshipStatus = matches.reduce((acc, person) => {
                 const status = db.getFriendshipStatus(userId, person.id);
+                
+                if(status.initBy === userId){
+                    status.initBy = "YOU";
+                }
+
                 return {
                     ...acc,
                     [person.id]: status
@@ -49,8 +47,5 @@ module.exports = (io) => {
             }, {});
             socket.emit("global search response", matches, fshipStatus);
         })
-
-
     })
-
 }
