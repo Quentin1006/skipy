@@ -55,51 +55,88 @@ module.exports = (db) => {
     }
 
 
+    const _canSendFriendRequest = (fship, userId, otherId) => {
+        const fshipExists = !!fship;
+
+        // Cant send a friend request to yourself 
+        if(userId === otherId){
+            return false;
+        }
+
+        // Friendship should not be PENDING or CONFIRMED
+        if(fshipExists && (fship.status === fsStatus.PENDING || fship.status === fsStatus.CONFIRMED)){
+            return false;
+        }
+
+        // If your request was declined you cant send a new one
+        if(fshipExists && fship.status === fsStatus.DECLINED && userId === fship.initBy){
+            return false;
+        }
+        return true;
+    }
+
+
     const sendFriendRequest = (senderId, receiverId) => {
         const friendships = _getFriendships();
-        const fship = _findFriendship(senderId, receiverId);
-        const fshipExists = !!fship;
+        let friendship = checkFriendship(senderId, receiverId);
         const fsId = `${senderId}#${receiverId}`;
+        const newFriendship = !friendship;
         
-        if(
-            (fshipExists && fship.status !== fsStatus.INEXISTANT) 
-            || senderId === receiverId 
-          ){
+        if(!_canSendFriendRequest(friendship, senderId, receiverId)){
             return {err: "ERR_NOT_ALLOWED"}
         }
         
-        friendships[fsId] = new Friendship({
-            senderId,
-            receiverId,
-            status: fsStatus.PENDING
-        })
+        if(newFriendship){
+            
+            friendships[fsId] = new Friendship({
+                senderId,
+                receiverId,
+                status: fsStatus.PENDING
+            })
+        }
+        else {
+            friendship.initBy = senderId;
+            friendship.status = fsStatus.PENDING;
+            friendship.since = Date.now()
+        }
 
         _updateFriendship(friendships);
 
-        const res = friendships[fsId]
+        friendship = newFriendship ? friendships[fsId] : friendship;
+        // We set status to a readable string
+        friendship.status = fsStatus[friendship.status]
 
-        return {res}
+        return {
+            res: {
+                receiverId,
+                senderId,
+                friendship
+            }
+        }
     }
 
     // Important to not mix senderId and receiverId to prevent 
     // sender from accepting the request he sent 
     const answerFriendRequest = (senderId, receiverId, accepted) => {
         const friendships = _getFriendships();
-        const fsId = `${senderId}#${receiverId}`;
-        const fship = friendships[fsId];
+        const fship = checkFriendship(senderId, receiverId);
         const status = fship && fship.status;
         
         if(!status || status !== fsStatus.PENDING || fship.initBy !== senderId){
             return {err: "ERR_NOT_ALLOWED"}
         }
 
-        friendships[fsId].status = accepted ? fsStatus.CONFIRMED : fsStatus.DECLINED        
+        fship.status = accepted ? fsStatus.CONFIRMED : fsStatus.DECLINED        
         _updateFriendship(friendships);
 
         const res = {
-            friendship: friendships[fsId],
             accepted,
-            receiverId
+            senderId,
+            receiverId,
+            friendship: {
+                ...fship,
+                status: fsStatus[fship.status]
+            }
         }
 
         return {res}
@@ -134,7 +171,13 @@ module.exports = (db) => {
 
         _updateFriendship(friendships);
 
-        return {res: true}
+        return {res: {
+            userDeleting, 
+            userDeleted,
+            friendship: {
+                status: fsStatus[fsStatus.INEXISTANT]
+            }
+        }}
     }
 
 

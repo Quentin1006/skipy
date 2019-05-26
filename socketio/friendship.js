@@ -53,7 +53,7 @@ module.exports = (io) => {
             const {err, res} = db.answerFriendRequest(fromId, userId, accepted);
             if(res){
                 socket.to(`friendship#${fromId}`)
-                      .emit("answer friend request response", {err, res});
+                      .emit("answered friend request response", {err, res});
             }
             socket.emit("answer friend request response", {err, res});
             return;
@@ -64,6 +64,8 @@ module.exports = (io) => {
             const {err, res} = db.deleteFriendship(userId, forId);
             if(res){
                 // Probably should remove the notification
+                socket.to(`friendship#${forId}`)
+                      .emit("canceled friend request response", {err, res})
             }
             socket.emit("cancel friend request response", {err, res});
         });
