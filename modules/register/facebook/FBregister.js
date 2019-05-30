@@ -1,6 +1,4 @@
 const FacebookOauth = require("../../../lib/OAuth/facebook/FBOauth");
-const User = require("../../../models/User");
-
 
 const checkIfUserExists = () => {
     throw(new Error("You have to implement the function checkIfUserExists"));
@@ -38,7 +36,7 @@ module.exports = (FBoauthCreds) => {
                 const { email } = user;
                 const existingUser = this.checkIfUserExists(email, "email");
                 if(!existingUser) {
-                    const userToAdd = User.validateUser({
+                    const userToAdd = {
                         id: `fb${user.id}`,
                         firstname: user.first_name,
                         username: user.first_name,
@@ -51,18 +49,18 @@ module.exports = (FBoauthCreds) => {
                             age: 0
                         },
                         role: 10
-                    })
-                    this.addUser(userToAdd);
+                    }
+                    const userCreated = this.addUser(userToAdd);
                     
                     return {
-                        user: new User({...userToAdd}),
+                        user: userCreated,
                         token,
                         just_registered: true
                     };
                 }
                 else {
                     return {
-                        user: new User(existingUser),
+                        user: existingUser,
                         token  
                     }
                 }
