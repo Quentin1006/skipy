@@ -1,6 +1,7 @@
 const debug = require("debug")("orm:notification");
 const { deepCopy } = require("../utils");
 const { isEmpty } = require("lodash");
+const Notification = require("../models/Notification");
 
 
 module.exports = (db) => {
@@ -31,21 +32,34 @@ module.exports = (db) => {
     }
 
 
-    const createNotification = (userId, notif) => {
-        const userNotifs = getUserNotifications(userId);
+    const createNotification = (to, {content, type, from}) => {
+        const userNotifs = getUserNotifications(to);
 
         if(isEmpty(userNotifs)){
-            debug("No notifications for the user", userId);
-            return {};
+            debug("No notifications for the user", to);
         }
 
-        notif.id = userNotifs.length > 0 ? userNotifs[userNotifs.length-1].id+1 : 0;
-        notif.date = Date.now();
-        userNotifs.push(notif);
+        try {
+            const newNotif = new Notification({
+                to,
+                content,
+                type,
+                from
+            });
 
-        _updateNotifications(userId, userNotifs);
+            userNotifs.push(newNotif);
+            _updateNotifications(to, userNotifs);
 
-        return notif;
+            return {res: {
+                notif: newNotif
+            }}
+        }
+        catch(err){
+            return {
+                err
+            }
+        }
+        
     }
 
 
@@ -54,7 +68,7 @@ module.exports = (db) => {
 
         if(isEmpty(notifications)){
             debug("No notifications for the user", userId);
-            return {};
+            return {err: true};
         }
 
         let deletedNotif = {};
@@ -70,7 +84,7 @@ module.exports = (db) => {
 
         if(isEmpty(deletedNotif)){
             debug("No notification corresponding to this id", notifId);
-            return {};
+            return {err: true};
         }
 
         _updateNotifications(userId, updatedNotifs)

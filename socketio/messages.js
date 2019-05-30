@@ -1,7 +1,7 @@
 const session = require("express-session");
 const sharedsession = require("express-socket.io-session");
 const { sessionOpts } = require("../config");
-const debug = require("debug")("socketio:messages");
+const { checkIfUser } = require("./helper")
 
 const db = require("../db");
 
@@ -16,15 +16,7 @@ const getDiscByDiscIdOrUsersId = (discOrFriendId, by) => {
 module.exports = (io) => {
     io.use(sharedsession(session(sessionOpts, { autoSave:true})));
 
-    io.use((socket, next) => {
-        const sess = socket.handshake.session;
-        if(!sess.user){
-            debug("No user attached to session, We close the socket");
-            socket.disconnect();
-            return;
-        }
-        next();
-    })
+    io.use(checkIfUser)
     
 
     io.on("connection", (socket) => {
