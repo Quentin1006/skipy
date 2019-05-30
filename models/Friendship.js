@@ -4,16 +4,12 @@ const FriendshipSchema = Joi.object().keys({
     user1Id: Joi.string().alphanum().required(),
     user2Id: Joi.string().alphanum().invalid(Joi.ref('user1Id')).required(),
     status: Joi.number().required(),
-    initBy: Joi.string().allow([Joi.ref('user1Id'), Joi.ref('user1Id')]),
+    initBy: Joi.string().allow([Joi.ref('user1Id'), Joi.ref('user2Id')]),
     since: Joi.date().timestamp(),
     relType: Joi.number().required()
 })
 
-/**
- * The purpose of this class is to validate the structure of the model
- * By using the static method valdate user before adding it to the db
- * And use the constructor before sending it to the client
- */
+
 class Friendship {
     constructor({senderId, receiverId, status, relType=-1}){
         const friendship = Friendship.validateFriendship({
