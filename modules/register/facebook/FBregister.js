@@ -26,7 +26,7 @@ module.exports = (FBoauthCreds) => {
                 .then((res) => token = res.access_token)
                 .catch((err) => { throw(err)});
         }
-        // On a directement le token depuis le client
+        /** On a directement le token depuis le client */ 
         else {
             token = auth_infos.token_or_code;
         }

@@ -1,8 +1,9 @@
 const Joi = require("joi");
-const { hostname, protocol } = require("../config");
+const { imagesUrlBase } = require("../config");
 const defaultProfilepicPath = "/ppicture/random.jpg";
 const defaultLandscapePicturePath = "/laquent_landscape.jpg";
 const userRole = 10;
+const urlProperties = ["profilepic", "landscapePicture"];
 
 
 const DatebSchema = Joi.object().keys({
@@ -44,17 +45,15 @@ class User {
             this[info] = user[info]
         });
 
-        ["profilepic", "landscapePicture"].map(pic => {
-            this._addDomainToPic(pic);
+        urlProperties.map(pic => {
+            User._addDomainToPic(this, pic);
         })
-        
-
-        this._addDomainToPic = this._addDomainToPic.bind(this)
 
     }
 
-
+    /** method to call before storing in db */
     static validateUser(obj){
+        urlProperties.map(pic => User._removeDomainToPic(obj, pic))
         const { error, value } = Joi.validate(obj, UserSchema);
         if(error)
             throw error;
@@ -62,11 +61,17 @@ class User {
         return value;
     }
 
+    static _removeDomainToPic (obj, picturePath) {
+        /** Store in relative path when possible */
+        obj[picturePath] = obj[picturePath].replace(imagesUrlBase, "")
+    }
 
-     _addDomainToPic(picturePath){
-        if(!this[picturePath].match(/^http/)){
-            const p = (hostname +"/"+this[picturePath]).replace(/\/\//g, "/");
-            this[picturePath] = protocol + "://" + p
+
+    static _addDomainToPic (obj, picturePath) {
+        if(!obj[picturePath].match(/^http/)){
+            /** the replace makes sure the relative path starts with one "/" */ 
+            const p = ("/"+obj[picturePath]).replace(/\/\//g, "/");
+            obj[picturePath] = imagesUrlBase + p
         }
     }
 }

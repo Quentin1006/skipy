@@ -9,6 +9,8 @@ const socketioOpts = require("./socketio");
 const { adminKey, pathToData } = require("./secret");
 
 const hostname = `${process.env.DOMAIN}:${process.env.PORT}`;
+// Where the images are stored
+const imagesUrlBase = process.env.IMAGES_URL_BASE
 const protocol = process.env.PROTOCOL;
 const maxAvailableSessions = 490;
 
@@ -28,4 +30,5 @@ module.exports = {
     hostname,
     protocol,
     maxAvailableSessions,
+    imagesUrlBase
 }

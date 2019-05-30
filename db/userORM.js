@@ -24,7 +24,7 @@ module.exports = (db) => {
     }
 
 
-    // returns all the user whose name, lastname or both matches partially the text 
+    /** returns all the user whose name, lastname or both matches partially the text  */ 
     const getUsersByName = (text, opts) => {
         opts = {
             max:10,
@@ -75,12 +75,22 @@ module.exports = (db) => {
             return false;
         }
 
-        users.push(user);
+        try {
+            const newUser = User.validateUser(user)
+            users.push(newUser);
+            db.set({
+                ...data,
+                users
+            });
+    
+            return new User(newUser);
+        }
+        catch(e){
+            return e;
+        }
+        
 
-        db.set({
-            ...data,
-            users
-        })
+        
     }
 
 
@@ -111,19 +121,19 @@ module.exports = (db) => {
 
     const getUserIndex = (userId) => {
         const data = db.get();
-        return data.users.findIndex(user => userId === user.id);
+        const user = data.users.findIndex(user => userId === user.id);
+        return new User(user)
     }
+
 
     const checkIfUserExists = (value, crit="id") => {
-        const data = db.get();
-        const { users } = data;
-
-        return users.find(user => user[crit] === value);
+        return getUsers({[crit]: value})[0];
     }
 
 
-    // Peut etre devrait on verifier si l'utilisateur 
-    // existe pour retourner une reponse plus precise
+    /** Peut etre devrait on verifier si l'utilisateur 
+     * existe pour retourner une reponse plus precise
+     * */ 
     const getUserFriends = (userId) => {
         userId = String(userId);
         const data = db.get();
