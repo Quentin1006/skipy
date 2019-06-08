@@ -1,9 +1,7 @@
 const session = require("express-session");
 const sharedsession = require("express-socket.io-session");
 const { sessionOpts } = require("../config");
-const { checkIfUser } = require("./helper")
-
-const db = require("../db");
+const { checkIfUser } = require("./helper");
 
 
 module.exports = (io) => {
@@ -20,22 +18,6 @@ module.exports = (io) => {
         socket.join(sockName);
 
         socket.emit("connNotification", sockName);
-
-        // "to" is the one we should notify
-        socket.on("add notif", ({content, type, to}) => {
-            const {err, res} = db.createNotification(
-                to, {content, type, from:userId}
-            );
-
-            if(res){
-                socket.to(`notification#${to}`)
-                      .emit("receive notif", {res})
-            }
-
-            socket.emit("add notif response", {err, res})
-        })
-
-    
     })
 
 }
