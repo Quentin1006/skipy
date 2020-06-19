@@ -56,7 +56,7 @@ class User {
         urlProperties.map(pic => User._removeDomainToPic(obj, pic))
         const { error, value } = Joi.validate(obj, UserSchema);
         if(error)
-            throw error;
+            return {err:error};
 
         return value;
     }

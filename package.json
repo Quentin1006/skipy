@@ -5,7 +5,7 @@
   "scripts": {
     "start": "node ./bin/www",
     "prod": "set NODE_ENV=production && node ./bin/www",
-    "test": "jest --detectOpenHandles --forceExit",
+    "test": "set DEBUG=none && jest --detectOpenHandles --forceExit",
     "loadtest": "set NODE_ENV=development && node ./bin/www"
   },
   "dependencies": {
@@ -24,6 +24,7 @@
     "fb": "^2.0.0",
     "http-errors": "~1.6.2",
     "joi": "^14.3.1",
+    "mongodb": "^3.2.7",
     "morgan": "^1.9.1",
     "nodemailer": "^4.6.8",
     "nodemailer-html-to-text": "^3.0.0",
@@ -39,7 +40,7 @@
     "jest": "^24.1.0",
     "loadtest": "^3.0.4",
     "optimist": "^0.6.1",
-    "puppeteer": "^1.9.0",
+    "puppeteer": "^1.18.1",
     "socket.io-client": "^2.1.1"
   },
   "jest": {
@@ -51,6 +52,8 @@
     "modulePathIgnorePatterns": [
       "<rootDir>/lib/"
     ],
-    "setupFiles": ["dotenv/config"]
+    "setupFiles": [
+      "dotenv/config"
+    ]
   }
 }

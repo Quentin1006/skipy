@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const db = require("../db");
 
 const loginCtrl = require('../controllers/loginCtrl');
 

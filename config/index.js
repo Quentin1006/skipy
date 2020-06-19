@@ -5,6 +5,7 @@ const mailerOpts = require("./mailer.js");
 const uploadOpts = require("./upload");
 const httpsOpts = require("./https");
 const socketioOpts = require("./socketio");
+const dbOpts = require("./db")
 
 const { adminKey, pathToData } = require("./secret");
 
@@ -26,6 +27,7 @@ module.exports = {
     uploadOpts,
     httpsOpts,
     socketioOpts,
+    dbOpts,
     pathToData,
     hostname,
     protocol,

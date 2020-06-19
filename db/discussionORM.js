@@ -4,9 +4,6 @@ const debug = require("debug")("orm:discussion");
 const uniqid = require('uniqid');
 
 module.exports = (db) => {
-
-    const User = require("./userORM")(db);
-
     const recomposeMessage = (msg) => {
         return {
             id: msg.id,
@@ -30,8 +27,8 @@ module.exports = (db) => {
 
         return {
             id: discussion.id,
-            user1: User.getUserById(discussion.user1),
-            user2: User.getUserById(discussion.user2),
+            user1: db.User.getUserById(discussion.user1),
+            user2: db.User.getUserById(discussion.user2),
             content: discussion.content.map(msg => recomposeMessage(msg, data))
         }
     };
@@ -250,10 +247,83 @@ module.exports = (db) => {
 
         return suggestions;
 
+		}
+		
+		const _getUnreadMessages = (fromDiscContent, userId) => {
+			const unreadMessages = {count:0};
+			const contentLen = fromDiscContent.length;
+
+			for(let i = contentLen - 1; i>= 0; i--){
+					const mess = fromDiscContent[i];
+					// Si c'est un message de l'user on passe au suivant
+					if(str(userId) === str(mess.from))
+							continue;
+
+					if(mess.state < 2 ){
+							unreadMessages.count++;
+					}
+					else {
+							break;
+					}
+			}
+
+			return unreadMessages.count;
+	}
+
+    const getUserActiveDiscussions = (userId) => {
+			const id = str(userId);
+			const data = db.get();
+			const userDiscs = data.discussions.filter(disc => (str(disc.user1) === id || str(disc.user2) === id))
+
+			const activeDiscs = userDiscs.map(disc => {
+				const withId = disc.user1 === id ? disc.user2 : disc.user1;
+				const lastMessage = disc.content[disc.content.length-1];
+
+				// Get the number of unread messages
+				const unreadMessagesCount = _getUnreadMessages(disc.content, id);
+				const msg = lastMessage ? recomposeMessage(lastMessage, data) :  {};
+
+				return {
+								id: disc.id,
+								with: getUserById(withId),
+								lastMessage: msg,
+								unreadMessagesCount,
+								lastUpdate: msg.date
+				}
+			});
+
+        return activeDiscs.sort((a, b) => b.lastUpdate > a.lastUpdate);
+
+    }
+
+    const getUserDiscussions = (userId) => {
+        const id = str(userId);
+        const data = db.get();
+        const discussions = data.discussions.filter(disc => (str(disc.user1) === id || str(disc.user2) === id))
+
+        return discussions.map(disc => {
+            const participants = {};
+            participants[disc.user1] = getUserById(disc.user1);
+            participants[disc.user2] = getUserById(disc.user2);
+
+            disc.user1 = participants[disc.user1];
+            disc.user2 = participants[disc.user2];
+
+            disc.content.map(msg => {
+                    msg.from = participants[msg.from]["username"];
+                    msg.to = participants[msg.to]["username"];
+
+                    return msg;
+            })
+
+            return disc;
+        })
     }
 
     return {
-        getDiscussion,
+				getDiscussion,
+				getUserDiscussions,
+        getUserActiveDiscussions,
         discussionExists,
         addDiscussionIfNotExist,
         addMessageToDiscussion,

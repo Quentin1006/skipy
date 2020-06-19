@@ -2,6 +2,7 @@
 require('app-module-path').addPath(`./${__dirname}`);
 require("dotenv").config(); // read the .env file into process.env
 
+const debug = require('debug')('app:entrypoint');
 const createError = require('http-errors');
 const express = require('express');
 const path = require('path');
@@ -10,16 +11,18 @@ const logger = require('morgan');
 const session = require('express-session');
 const cors = require("cors");
 const fileUpload = require("express-fileupload");
-const { sessionOpts, corsOpts, uploadOpts } = require("./config");
-
+const db = require('./db');
 const indexRouter = require('./routes');
+const { sessionOpts, corsOpts, uploadOpts } = require("./config");
 
 const app = express();
 
+/** Start the db */
+db.start()
 
 app.use((req, res, next) => {
   if(process.env.NODE_ENV === "development" && app.worker)
-    console.log(app.worker.id);
+    debug(app.worker.id);
   next();
 })
 
